@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'paper_id', 'amount_paid', 'payhere_order_id', 'status'])]
+#[Fillable(['user_id', 'session_id', 'guest_email', 'claim_token', 'paper_id', 'amount_paid', 'payhere_order_id', 'status'])]
 class Purchase extends Model
 {
     /**

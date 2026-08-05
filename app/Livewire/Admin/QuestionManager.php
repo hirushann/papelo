@@ -2,33 +2,22 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Subject;
 use App\Models\Paper;
 use App\Models\Question;
 use App\Models\Option;
-use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Livewire\Attributes\Validate;
+use Livewire\Attributes\Url;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.admin')]
 class QuestionManager extends Component
 {
     use WithFileUploads;
 
-    public int $step = 1;
-    public $selectedSubjectId = '';
-    public string $subjectName = '';
-    public string $subjectLevel = '';
-    public string $subjectMedium = '';
-    public bool $creatingSubject = false;
-
-    public $selectedPaperId = '';
-    public string $paperTitle = '';
-    public string $paperYear = '';
-    public string $paperPrice = '';
-    public string $paperDuration = '';
-    public bool $creatingPaper = false;
+    #[Url]
+    public $paper_id = '';
 
     public string $questionText = '';
     public $questionImage = null;
@@ -42,154 +31,42 @@ class QuestionManager extends Component
     public ?string $correctOption = null;
 
     public ?int $editingQuestionId = null;
-    public bool $showQuestionForm = false;
     public bool $removeImage = false;
     public string $successMessage = '';
 
-    #[Computed]
-    public function subjects()
+    public function mount()
     {
-        return Subject::orderBy('name')->get();
+        if (!$this->paper_id) {
+            return;
+        }
+
+        if (!$this->paper) {
+            return redirect()->route('admin.papers');
+        }
+        
+        // Select first question automatically if exists
+        $firstQuestion = $this->questions->first();
+        if ($firstQuestion) {
+            $this->editQuestion($firstQuestion->id);
+        }
     }
 
     #[Computed]
-    public function selectedSubject()
+    public function paper()
     {
-        return $this->selectedSubjectId
-            ? Subject::find($this->selectedSubjectId)
-            : null;
-    }
-
-    #[Computed]
-    public function papers()
-    {
-        return $this->selectedSubjectId
-            ? Paper::where('subject_id', $this->selectedSubjectId)->orderByDesc('year')->get()
-            : collect();
-    }
-
-    #[Computed]
-    public function selectedPaper()
-    {
-        return $this->selectedPaperId
-            ? Paper::find($this->selectedPaperId)
-            : null;
+        return Paper::with('subject')->find($this->paper_id);
     }
 
     #[Computed]
     public function questions()
     {
-        return $this->selectedPaperId
-            ? Question::where('paper_id', $this->selectedPaperId)
-                ->with('options')
-                ->orderBy('order_index')
-                ->get()
-            : collect();
+        return Question::where('paper_id', $this->paper_id)
+            ->with('options')
+            ->orderBy('order_index')
+            ->get();
     }
 
-    public function selectSubject(): void
-    {
-        $this->validate([
-            'selectedSubjectId' => 'required',
-        ], [
-            'selectedSubjectId.required' => 'Please choose a subject to continue.',
-        ]);
-
-        $this->step = 2;
-        $this->resetPaperFields();
-    }
-
-    public function toggleCreateSubject(): void
-    {
-        $this->creatingSubject = !$this->creatingSubject;
-        $this->resetValidation();
-    }
-
-    public function createSubject(): void
-    {
-        $this->validate([
-            'subjectName' => 'required|string|max:255',
-            'subjectLevel' => 'required|in:scholarship,ol,al',
-            'subjectMedium' => 'required|in:english,sinhala,tamil',
-        ]);
-
-        $subject = Subject::create([
-            'name' => $this->subjectName,
-            'level' => $this->subjectLevel,
-            'medium' => $this->subjectMedium,
-            'slug' => Str::slug($this->subjectName . '-' . $this->subjectLevel . '-' . $this->subjectMedium),
-        ]);
-
-        $this->selectedSubjectId = $subject->id;
-        $this->creatingSubject = false;
-        $this->subjectName = '';
-        $this->subjectLevel = '';
-        $this->subjectMedium = '';
-        $this->step = 2;
-        $this->successMessage = 'Subject created successfully!';
-        unset($this->subjects);
-    }
-
-    public function selectPaper(): void
-    {
-        $this->validate([
-            'selectedPaperId' => 'required',
-        ], [
-            'selectedPaperId.required' => 'Please choose a paper to continue.',
-        ]);
-
-        $this->step = 3;
-        $this->resetQuestionFields();
-    }
-
-    public function toggleCreatePaper(): void
-    {
-        $this->creatingPaper = !$this->creatingPaper;
-        $this->resetValidation();
-    }
-
-    public function createPaper(): void
-    {
-        $this->validate([
-            'paperTitle' => 'required|string|max:255',
-            'paperYear' => 'required|integer|min:1990|max:' . (date('Y') + 1),
-            'paperPrice' => 'required|numeric|min:0',
-            'paperDuration' => 'required|integer|min:1',
-        ]);
-
-        $paper = Paper::create([
-            'subject_id' => $this->selectedSubjectId,
-            'title' => $this->paperTitle,
-            'year' => (int) $this->paperYear,
-            'price' => (float) $this->paperPrice,
-            'duration_minutes' => (int) $this->paperDuration,
-            'is_published' => false,
-        ]);
-
-        $this->selectedPaperId = $paper->id;
-        $this->creatingPaper = false;
-        $this->resetPaperFormFields();
-        $this->step = 3;
-        $this->successMessage = 'Paper created successfully!';
-        unset($this->papers);
-    }
-
-    public function togglePublishPaper(): void
-    {
-        if (!$this->selectedPaperId) return;
-
-        $paper = \App\Models\Paper::find($this->selectedPaperId);
-        if ($paper) {
-            $paper->is_published = !$paper->is_published;
-            $paper->save();
-            
-            \Illuminate\Support\Facades\Cache::forget('catalog_published_papers');
-            
-            $this->successMessage = $paper->is_published ? 'Paper published successfully!' : 'Paper unpublished.';
-        }
-    }
-
-    public function saveQuestion(): void
+    public function saveQuestion(bool $addNext = false): void
     {
         $this->validate([
             'questionText' => 'required|string',
@@ -202,10 +79,10 @@ class QuestionManager extends Component
             'correctOption' => 'required|in:0,1,2,3',
         ], [
             'questionText.required' => 'The question text is required.',
-            'options.0.text.required' => 'Option A is required.',
-            'options.1.text.required' => 'Option B is required.',
-            'options.2.text.required' => 'Option C is required.',
-            'options.3.text.required' => 'Option D is required.',
+            'options.0.text.required' => 'Option 1 is required.',
+            'options.1.text.required' => 'Option 2 is required.',
+            'options.2.text.required' => 'Option 3 is required.',
+            'options.3.text.required' => 'Option 4 is required.',
             'correctOption.required' => 'You must select which option is the correct answer.',
         ]);
 
@@ -217,7 +94,7 @@ class QuestionManager extends Component
 
         $nextOrder = $this->editingQuestionId
             ? Question::find($this->editingQuestionId)->order_index
-            : (Question::where('paper_id', $this->selectedPaperId)->max('order_index') ?? 0) + 1;
+            : ($this->questions->max('order_index') ?? 0) + 1;
 
         if ($this->editingQuestionId) {
             // Update existing question
@@ -249,7 +126,7 @@ class QuestionManager extends Component
         } else {
             // Create new question
             $question = Question::create([
-                'paper_id' => $this->selectedPaperId,
+                'paper_id' => $this->paper_id,
                 'question_text' => $this->questionText,
                 'image_path' => $imagePath,
                 'topic_tag' => $this->topicTag ?: null,
@@ -271,21 +148,28 @@ class QuestionManager extends Component
             ? 'Question updated successfully!'
             : 'Question added successfully!';
 
-        $this->resetQuestionFields();
-        $this->showQuestionForm = false;
         unset($this->questions);
+        
+        if ($addNext) {
+            $this->showAddForm();
+        } else {
+            // Stay on the same edited question, just refresh UI
+            $this->editQuestion($question->id);
+            // Hide success message after a bit could be done in alpine, for now just let it show
+        }
     }
 
     public function editQuestion(int $questionId): void
     {
         $question = Question::with('options')->find($questionId);
-        if (!$question) return;
+        if (!$question || $question->paper_id != $this->paper_id) return;
 
         $this->editingQuestionId = $question->id;
         $this->questionText = $question->question_text;
         $this->topicTag = $question->topic_tag ?? '';
         $this->questionImage = null;
         $this->removeImage = false;
+        $this->successMessage = '';
 
         $this->options = [];
         $this->correctOption = null;
@@ -304,66 +188,35 @@ class QuestionManager extends Component
         while (count($this->options) < 4) {
             $this->options[] = ['text' => '', 'is_correct' => false];
         }
-
-        $this->showQuestionForm = true;
     }
 
-    public function deleteQuestion(int $questionId): void
+    public function deleteQuestion(): void
     {
-        Question::find($questionId)?->delete();
+        if (!$this->editingQuestionId) return;
+        
+        Question::find($this->editingQuestionId)?->delete();
 
         // Reorder remaining questions
-        $questions = Question::where('paper_id', $this->selectedPaperId)
+        $remainingQuestions = Question::where('paper_id', $this->paper_id)
             ->orderBy('order_index')
             ->get();
 
-        foreach ($questions as $index => $question) {
-            $question->update(['order_index' => $index + 1]);
+        foreach ($remainingQuestions as $index => $q) {
+            $q->update(['order_index' => $index + 1]);
         }
 
-        $this->successMessage = 'Question deleted.';
         unset($this->questions);
+        $this->successMessage = 'Question deleted.';
+        
+        $firstQuestion = $this->questions->first();
+        if ($firstQuestion) {
+            $this->editQuestion($firstQuestion->id);
+        } else {
+            $this->showAddForm();
+        }
     }
 
     public function showAddForm(): void
-    {
-        $this->resetQuestionFields();
-        $this->showQuestionForm = true;
-    }
-
-    public function cancelEdit(): void
-    {
-        $this->resetQuestionFields();
-        $this->showQuestionForm = false;
-    }
-
-    public function goToStep(int $step): void
-    {
-        if ($step === 1) {
-            $this->step = 1;
-        } elseif ($step === 2 && $this->selectedSubjectId) {
-            $this->step = 2;
-        } elseif ($step === 3 && $this->selectedPaperId) {
-            $this->step = 3;
-        }
-    }
-
-    private function resetPaperFields(): void
-    {
-        $this->selectedPaperId = '';
-        $this->creatingPaper = false;
-        $this->resetPaperFormFields();
-    }
-
-    private function resetPaperFormFields(): void
-    {
-        $this->paperTitle = '';
-        $this->paperYear = '';
-        $this->paperPrice = '';
-        $this->paperDuration = '';
-    }
-
-    private function resetQuestionFields(): void
     {
         $this->editingQuestionId = null;
         $this->questionText = '';
@@ -377,6 +230,7 @@ class QuestionManager extends Component
             ['text' => '', 'is_correct' => false],
             ['text' => '', 'is_correct' => false],
         ];
+        $this->successMessage = '';
         $this->resetValidation();
     }
 

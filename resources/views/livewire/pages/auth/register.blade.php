@@ -44,34 +44,33 @@ new #[Layout('layouts.guest')] class extends Component
 
         Auth::login($user);
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        $redirectRoute = $user->is_admin ? route('admin.dashboard', absolute: false) : route('papers', absolute: false);
+        $this->redirect($redirectRoute, navigate: true);
     }
 }; ?>
-
-<div>
-    <style>
-        .level-option input { display: none; }
-        .level-option span {
-            display: block;
-            text-align: center;
-            border: 1px solid rgba(34,49,74,0.15);
-            border-radius: 0.5rem;
-            padding: 0.55rem 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: rgba(34,49,74,0.6);
-            cursor: pointer;
-            transition: all .15s;
-        }
-        .level-option input:checked + span {
-            border-color: #3F7D6B;
-            border-width: 2px;
-            background: rgba(63,125,107,0.1);
-            color: #22314A;
-        }
-    </style>
-
-    <div class="bg-white rounded-2xl border border-ink/10 shadow-xl shadow-ink/5 p-8">
+<style>
+    .level-option input { display: none; }
+    .level-option span {
+        display: block;
+        text-align: center;
+        border: 1px solid rgba(34,49,74,0.15);
+        border-radius: 0.5rem;
+        padding: 0.55rem 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: rgba(34,49,74,0.6);
+        cursor: pointer;
+        transition: all .15s;
+    }
+    .level-option input:checked + span {
+        border-color: #3F7D6B;
+        border-width: 2px;
+        background: rgba(63,125,107,0.1);
+        color: #22314A;
+    }
+</style>
+<div class="flex-1 flex items-center justify-center px-6 py-12">
+    <div class="w-full max-w-sm bg-white rounded-2xl border border-ink/10 shadow-xl shadow-ink/5 p-8">
         <h1 class="font-display text-2xl text-ink mb-1.5">Create your account</h1>
         <p class="text-sm text-ink/60 mb-6">Start practicing in under a minute.</p>
 
@@ -116,7 +115,7 @@ new #[Layout('layouts.guest')] class extends Component
             <div>
                 <label class="flex items-start gap-2 text-xs text-ink/60 pt-1">
                     <input wire:model="terms" type="checkbox" required class="rounded border-ink/25 text-teal focus:ring-teal mt-0.5">
-                    <span>I agree to Papelo's <a href="#" class="text-teal underline">Terms</a> and <a href="#" class="text-teal underline">Privacy Policy</a></span>
+                    <span>I agree to Papelo's <a href="{{ route('terms') }}" class="text-teal underline" target="_blank">Terms</a> and <a href="{{ route('privacy') }}" class="text-teal underline" target="_blank">Privacy Policy</a></span>
                 </label>
                 <x-input-error :messages="$errors->get('terms')" class="mt-2" />
             </div>

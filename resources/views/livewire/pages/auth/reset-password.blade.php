@@ -69,37 +69,39 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div>
-    <form wire:submit="resetPassword">
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+<div class="flex-1 flex flex-col items-center justify-center px-6 py-12">
+    <div class="bg-white rounded-2xl w-full max-w-sm p-8 shadow-xl shadow-ink/5 border border-ink/10 relative">
+        <div class="w-12 h-12 rounded-full bg-teal/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>
         </div>
+        <h2 class="font-display text-2xl text-ink mb-1.5">Set a new password</h2>
+        <p class="text-sm text-ink/60 mb-6">Choose a new password for your account.</p>
+        
+        <form wire:submit="resetPassword">
+            <div class="space-y-4 mb-6">
+                <!-- Email Address -->
+                <div>
+                    <label class="block text-xs font-semibold text-ink/70 mb-1.5">Email</label>
+                    <input wire:model="email" type="email" required autofocus autocomplete="username" class="w-full border border-ink/15 rounded-lg py-[0.65rem] px-[0.9rem] text-[0.9rem] text-ink bg-white transition-colors focus:outline-none focus:border-teal focus:ring-[3px] focus:ring-teal/15 shadow-sm">
+                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+                <!-- Password -->
+                <div>
+                    <label class="block text-xs font-semibold text-ink/70 mb-1.5">New password</label>
+                    <input wire:model="password" type="password" required autocomplete="new-password" placeholder="At least 8 characters" class="w-full border border-ink/15 rounded-lg py-[0.65rem] px-[0.9rem] text-[0.9rem] text-ink bg-white transition-colors focus:outline-none focus:border-teal focus:ring-[3px] focus:ring-teal/15 shadow-sm">
+                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full"
-                          type="password"
-                          name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
+                <!-- Confirm Password -->
+                <div>
+                    <label class="block text-xs font-semibold text-ink/70 mb-1.5">Confirm new password</label>
+                    <input wire:model="password_confirmation" type="password" required autocomplete="new-password" placeholder="Re-enter password" class="w-full border border-ink/15 rounded-lg py-[0.65rem] px-[0.9rem] text-[0.9rem] text-ink bg-white transition-colors focus:outline-none focus:border-teal focus:ring-[3px] focus:ring-teal/15 shadow-sm">
+                    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full rounded-lg bg-teal text-paper font-semibold py-3 hover:bg-teal/90 transition shadow-sm">Reset password</button>
+        </form>
+    </div>
 </div>

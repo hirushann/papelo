@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Livewire\Admin;
+
+use App\Models\Setting;
+use Livewire\Component;
+use Livewire\Attributes\Layout;
+
+#[Layout('layouts.admin', ['header' => 'Settings'])]
+class Settings extends Component
+{
+    // General
+    public string $platformName = 'Papelo';
+    public string $supportEmail = 'support@papelo.lk';
+    public string $timezone = 'Asia/Colombo (GMT+5:30)';
+    public string $currency = 'LKR — Sri Lankan Rupee';
+
+    // Payment
+    public string $payhereMode = 'Sandbox';
+    public string $merchantId = '1221XXXX';
+    public string $merchantSecret = '••••••••••••••••';
+    
+    // Pricing Defaults
+    public int $defaultPrice = 100;
+    public int $defaultSubscription = 990;
+
+    // Notifications
+    public bool $notifyNewStudent = true;
+    public bool $notifyFailedPayment = true;
+    public bool $notifyNewPaper = false;
+    public bool $notifyWeeklySummary = true;
+
+    public string $successMessage = '';
+
+    public function mount()
+    {
+        $settings = Setting::pluck('value', 'key')->toArray();
+
+        // General
+        $this->platformName = $settings['platformName'] ?? $this->platformName;
+        $this->supportEmail = $settings['supportEmail'] ?? $this->supportEmail;
+        $this->timezone = $settings['timezone'] ?? $this->timezone;
+        $this->currency = $settings['currency'] ?? $this->currency;
+
+        // Payment
+        $this->payhereMode = $settings['payhereMode'] ?? $this->payhereMode;
+        $this->merchantId = $settings['merchantId'] ?? $this->merchantId;
+        $this->merchantSecret = $settings['merchantSecret'] ?? $this->merchantSecret;
+
+        // Pricing Defaults
+        $this->defaultPrice = $settings['defaultPrice'] ?? $this->defaultPrice;
+        $this->defaultSubscription = $settings['defaultSubscription'] ?? $this->defaultSubscription;
+
+        // Notifications (cast string to boolean if stored in DB)
+        $this->notifyNewStudent = isset($settings['notifyNewStudent']) ? (bool)$settings['notifyNewStudent'] : $this->notifyNewStudent;
+        $this->notifyFailedPayment = isset($settings['notifyFailedPayment']) ? (bool)$settings['notifyFailedPayment'] : $this->notifyFailedPayment;
+        $this->notifyNewPaper = isset($settings['notifyNewPaper']) ? (bool)$settings['notifyNewPaper'] : $this->notifyNewPaper;
+        $this->notifyWeeklySummary = isset($settings['notifyWeeklySummary']) ? (bool)$settings['notifyWeeklySummary'] : $this->notifyWeeklySummary;
+    }
+
+    public function saveSettings()
+    {
+        $keys = [
+            'platformName', 'supportEmail', 'timezone', 'currency',
+            'payhereMode', 'merchantId', 'merchantSecret',
+            'defaultPrice', 'defaultSubscription',
+            'notifyNewStudent', 'notifyFailedPayment', 'notifyNewPaper', 'notifyWeeklySummary'
+        ];
+
+        foreach ($keys as $key) {
+            Setting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $this->$key]
+            );
+        }
+
+        $this->successMessage = 'Settings saved successfully!';
+    }
+
+    public function exportData()
+    {
+        // Mock export logic
+        $this->successMessage = 'Data export started. You will receive an email shortly.';
+    }
+
+    public function render()
+    {
+        return view('livewire.admin.settings');
+    }
+}

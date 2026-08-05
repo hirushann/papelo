@@ -25,7 +25,7 @@
                 </a>
                 <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-ink/80">
                     <a href="#how" class="hover:text-ink">How it works</a>
-                    <a href="#papers" class="hover:text-ink">Papers</a>
+                    <a href="{{ route('papers') }}" class="hover:text-ink">Papers</a>
                     <a href="#pricing" class="hover:text-ink">Pricing</a>
                 </nav>
                 <div class="flex items-center gap-3">

@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('attempts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
+            $table->string('session_id')->nullable()->index();
             $table->foreignId('paper_id')->constrained('papers')->cascadeOnDelete();
             $table->timestamp('started_at');
             $table->timestamp('completed_at')->nullable();

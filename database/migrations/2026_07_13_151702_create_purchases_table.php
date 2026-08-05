@@ -13,14 +13,19 @@ return new class extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
+            $table->string('session_id')->nullable()->index();
+            $table->string('guest_email')->nullable();
+            $table->string('claim_token')->nullable()->unique();
             $table->foreignId('paper_id')->constrained('papers')->cascadeOnDelete();
             $table->decimal('amount_paid', 8, 2);
             $table->string('payhere_order_id')->nullable()->index();
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
             $table->timestamps();
 
-            $table->unique(['user_id', 'paper_id']);
+            // We can't have a unique constraint on just user_id and paper_id if user_id is nullable.
+            // Better to remove the unique constraint, or only enforce it via application logic.
+            // $table->unique(['user_id', 'paper_id']);
         });
     }
 

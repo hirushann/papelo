@@ -2,57 +2,85 @@
 
 namespace App\Livewire;
 
+use App\Models\Attempt;
+use App\Models\Paper;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use App\Models\Purchase;
-use App\Models\Attempt;
 
 class StudentDashboard extends Component
 {
-    public function render()
-    {
-        $user = Auth::user();
+    public $user;
+    public $incompleteAttempt = null;
+    public $recentAttempts = [];
+    public $stats = [
+        'papers_attempted' => 0,
+        'average_score' => 0,
+        'papers_this_week' => 0,
+    ];
+    public $suggestedPaper = null;
 
-        // Calculate stats
-        $totalPurchased = $user->purchases()->where('status', 'completed')->count();
-        $totalAttempts = $user->attempts()->count();
-        $averageScore = $totalAttempts > 0 ? $user->attempts()->avg('score') : 0;
-        
-        // Let's assume average score is percentage if total_questions is consistent, 
-        // but since score is absolute, let's calculate average percentage score.
-        $averagePercentage = 0;
-        if ($totalAttempts > 0) {
-            $attempts = $user->attempts()->get();
-            $totalPercentage = 0;
-            foreach ($attempts as $attempt) {
-                if ($attempt->total_questions > 0) {
-                    $totalPercentage += ($attempt->score / $attempt->total_questions) * 100;
-                }
-            }
-            $averagePercentage = round($totalPercentage / $totalAttempts, 1);
+    public function mount()
+    {
+        $this->user = Auth::user();
+
+        if (!$this->user) {
+            return redirect()->route('login');
         }
 
-        // Recent Purchases (Continue Learning)
-        $recentPurchases = Purchase::with(['paper.subject'])
-            ->where('user_id', $user->id)
-            ->where('status', 'completed')
-            ->orderBy('created_at', 'desc')
-            ->take(3)
+        // 1. Redirect admins to the admin dashboard
+        if ($this->user->is_admin) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        // 2. Check for incomplete attempt
+        $this->incompleteAttempt = Attempt::with('paper')
+            ->where('user_id', $this->user->id)
+            ->whereNull('completed_at')
+            ->orderBy('started_at', 'desc')
+            ->first();
+
+        // 2. Load Stats
+        $completedAttemptsQuery = Attempt::where('user_id', $this->user->id)
+            ->whereNotNull('completed_at');
+        
+        $this->stats['papers_attempted'] = $completedAttemptsQuery->count();
+        $this->stats['average_score'] = $this->stats['papers_attempted'] > 0 
+            ? round($completedAttemptsQuery->avg('score')) 
+            : 0;
+            
+        $this->stats['papers_this_week'] = Attempt::where('user_id', $this->user->id)
+            ->where('started_at', '>=', Carbon::now()->subDays(7))
+            ->count();
+
+        // 3. Load Recent Scores
+        $this->recentAttempts = Attempt::with('paper')
+            ->where('user_id', $this->user->id)
+            ->whereNotNull('completed_at')
+            ->orderBy('completed_at', 'desc')
+            ->take(4)
             ->get();
 
-        // Recent Attempts
-        $recentAttempts = Attempt::with(['paper.subject'])
-            ->where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
+        // 4. Suggested Next Paper (Fallback logic: latest published paper they haven't taken)
+        $attemptedPaperIds = Attempt::where('user_id', $this->user->id)
+            ->pluck('paper_id')
+            ->toArray();
+            
+        $this->suggestedPaper = Paper::where('is_published', true)
+            ->whereNotIn('id', $attemptedPaperIds)
+            ->latest()
+            ->first();
+    }
 
-        return view('livewire.student-dashboard', [
-            'totalPurchased' => $totalPurchased,
-            'totalAttempts' => $totalAttempts,
-            'averagePercentage' => $averagePercentage,
-            'recentPurchases' => $recentPurchases,
-            'recentAttempts' => $recentAttempts,
-        ]);
+    public function logout(\App\Livewire\Actions\Logout $logout)
+    {
+        $logout();
+        $this->redirect('/', navigate: true);
+    }
+
+    public function render()
+    {
+        return view('livewire.student-dashboard')
+            ->layout('layouts.quiz');
     }
 }

@@ -7,6 +7,9 @@
 
         <title>{{ config('app.name', 'Papelo') }}</title>
 
+        <link rel="icon" href="{{ asset('images/papelo-icon-tile.svg') }}" type="image/svg+xml">
+        <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,18 +25,29 @@
                 <span class="font-display text-xl text-ink">Papelo</span>
             </a>
             
-            @if(request()->routeIs('login'))
-                <p class="text-sm text-ink/60">New here? <a href="{{ route('register') }}" wire:navigate class="text-teal font-semibold hover:underline">Create an account</a></p>
-            @elseif(request()->routeIs('register'))
-                <p class="text-sm text-ink/60">Already have an account? <a href="{{ route('login') }}" wire:navigate class="text-teal font-semibold hover:underline">Log in</a></p>
-            @endif
+            <div class="flex items-center gap-4">
+                @auth
+                    @if(auth()->user()->is_admin)
+                        <a href="{{ route('dashboard') }}" class="text-sm font-medium text-ink/70 hover:text-ink">Admin</a>
+                    @endif
+                    <a href="{{ route('profile') }}" class="text-sm font-medium text-ink/70 hover:text-ink">Profile</a>
+                    <livewire:frontend-logout />
+                @else
+                    @if(request()->routeIs('login'))
+                        <p class="text-sm text-ink/60">New here? <a href="{{ route('register') }}" wire:navigate class="text-teal font-semibold hover:underline">Create an account</a></p>
+                    @elseif(request()->routeIs('register'))
+                        <p class="text-sm text-ink/60">Already have an account? <a href="{{ route('login') }}" wire:navigate class="text-teal font-semibold hover:underline">Log in</a></p>
+                    @else
+                        <a href="{{ route('login') }}" class="text-sm font-medium text-ink/70 hover:text-ink">Log in</a>
+                        <a href="{{ route('register') }}" class="text-sm font-semibold bg-teal text-white px-4 py-2 rounded-lg hover:bg-teal/90 transition">Sign up</a>
+                    @endif
+                @endauth
+            </div>
         </header>
 
-        <!-- MAIN CARD -->
-        <main class="flex-1 flex items-center justify-center px-6 py-12">
-            <div class="w-full max-w-sm">
-                {{ $slot }}
-            </div>
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 w-full">
+            {{ $slot }}
         </main>
 
         <footer class="text-center text-xs text-ink/40 pb-8">&copy; {{ date('Y') }} Papelo. Made for Sri Lankan students.</footer>

@@ -18,12 +18,12 @@ class PaperCatalog extends Component
     #[Computed]
     public function purchasedPaperIds()
     {
-        if (! Auth::check()) {
+        if (!Auth::check()) {
             return collect();
         }
 
-        return Purchase::where('user_id', Auth::id())
-            ->where('status', 'completed')
+        return Purchase::where('status', 'completed')
+            ->where('user_id', Auth::id())
             ->pluck('paper_id');
     }
 
@@ -91,5 +91,18 @@ class PaperCatalog extends Component
             'al' => 'indigo',
             default => '',
         };
+    }
+
+    public function logout(\App\Livewire\Actions\Logout $logout)
+    {
+        $logout();
+        $this->redirect('/', navigate: true);
+    }
+
+    public function render()
+    {
+        return view('livewire.paper-catalog')
+            ->layout('layouts.quiz')
+            ->title('Past Papers — Papelo');
     }
 }

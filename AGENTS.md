@@ -86,7 +86,7 @@ depends on these exact names.
 - [x] Prompt 3 (PaperCatalog)
 - [x] Prompt 4 (QuizTaker)
 - [x] Prompt 5 (ResultSummary)
-- [ ] Prompt 6 (PayHere integration)
+- [x] Prompt 6 (PayHere integration)
 - [x] Prompt 7 (Landing page)
 
 Update this checklist as you complete each prompt so a fresh agent session

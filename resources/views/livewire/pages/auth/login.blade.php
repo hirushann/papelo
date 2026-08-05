@@ -20,12 +20,13 @@ new #[Layout('layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        $redirectRoute = auth()->user()->is_admin ? route('admin.dashboard', absolute: false) : route('papers', absolute: false);
+        $this->redirectIntended(default: $redirectRoute, navigate: true);
     }
 }; ?>
 
-<div>
-    <div class="bg-white rounded-2xl border border-ink/10 shadow-xl shadow-ink/5 p-8">
+<div class="flex-1 flex flex-col items-center justify-center px-6 py-12">
+    <div class="w-full max-w-sm bg-white rounded-2xl border border-ink/10 shadow-xl shadow-ink/5 p-8">
         <h1 class="font-display text-2xl text-ink mb-1.5">Welcome back</h1>
         <p class="text-sm text-ink/60 mb-7">Log in to pick up where you left off.</p>
 
@@ -61,5 +62,5 @@ new #[Layout('layouts.guest')] class extends Component
         <p class="text-center text-sm text-ink/60 mt-6">Don't have an account? <a href="{{ route('register') }}" wire:navigate class="text-teal font-semibold hover:underline">Sign up</a></p>
     </div>
 
-    <p class="text-center text-xs text-ink/40 mt-6">By continuing, you agree to Papelo's <a href="#" class="underline">Terms</a> and <a href="#" class="underline">Privacy Policy</a>.</p>
+    <p class="text-center text-xs text-ink/40 mt-6">By continuing, you agree to Papelo's <a href="{{ route('terms') }}" class="underline" target="_blank">Terms</a> and <a href="{{ route('privacy') }}" class="underline" target="_blank">Privacy Policy</a>.</p>
 </div>

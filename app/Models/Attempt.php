@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['user_id', 'paper_id', 'started_at', 'completed_at', 'score', 'total_questions'])]
+#[Fillable(['user_id', 'session_id', 'paper_id', 'started_at', 'completed_at', 'score', 'total_questions'])]
 class Attempt extends Model
 {
     /**
