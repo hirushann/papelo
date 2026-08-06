@@ -21,33 +21,50 @@ new #[Layout('layouts.guest')] class extends Component
      */
     public function register(): void
     {
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'string', Rules\Password::defaults()],
-            'level' => ['required', 'in:scholarship,ol,al'],
-            'terms' => ['accepted'],
+        \Illuminate\Support\Facades\Log::info('REGISTER: method called', [
+            'name' => $this->name,
+            'email' => $this->email,
+            'level' => $this->level,
+            'terms' => $this->terms,
+            'password_length' => strlen($this->password),
         ]);
+
+        try {
+            $validated = $this->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+                'password' => ['required', 'string', Rules\Password::defaults()],
+                'level' => ['required', 'in:scholarship,ol,al'],
+                'terms' => ['accepted'],
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Illuminate\Support\Facades\Log::error('REGISTER: Validation Failed', $e->errors());
+            throw $e;
+        }
+
+        \Illuminate\Support\Facades\Log::info('REGISTER: validation passed', ['validated' => $validated]);
 
         $user_data = [
             'name' => $validated['name'],
-            'email' => $validated['email'],
+            'email' => strtolower($validated['email']),
             'password' => Hash::make($validated['password']),
+            'level' => $validated['level'],
         ];
 
-        // Only save level if the column exists in the database
-        if (in_array('level', \Illuminate\Support\Facades\Schema::getColumnListing('users'))) {
-            $user_data['level'] = $validated['level'];
-        }
+        \Illuminate\Support\Facades\Log::info('REGISTER: creating user', ['user_data_keys' => array_keys($user_data), 'level' => $user_data['level']]);
 
-        event(new Registered($user = User::create($user_data)));
+        $user = User::create($user_data);
 
+        \Illuminate\Support\Facades\Log::info('REGISTER: user created', ['user_id' => $user->id, 'level_in_db' => $user->level]);
+
+        event(new Registered($user));
         Auth::login($user);
 
         $redirectRoute = $user->is_admin ? route('admin.dashboard', absolute: false) : route('papers', absolute: false);
         $this->redirect($redirectRoute, navigate: true);
     }
 }; ?>
+<div>
 <style>
     .level-option input { display: none; }
     .level-option span {
@@ -74,7 +91,7 @@ new #[Layout('layouts.guest')] class extends Component
         <h1 class="font-display text-2xl text-ink mb-1.5">Create your account</h1>
         <p class="text-sm text-ink/60 mb-6">Start practicing in under a minute.</p>
 
-        <form wire:submit="register" class="space-y-4">
+        <form wire:submit.prevent="register" class="space-y-4">
             <div>
                 <label class="block text-xs font-semibold text-ink/70 mb-1.5">Full name</label>
                 <input wire:model="name" type="text" required autofocus placeholder="Nimal Perera" class="w-full border border-ink/15 rounded-lg py-[0.65rem] px-[0.9rem] text-[0.9rem] text-ink bg-white transition-colors focus:outline-none focus:border-teal focus:ring-[3px] focus:ring-teal/15 shadow-sm">
@@ -97,15 +114,15 @@ new #[Layout('layouts.guest')] class extends Component
                 <label class="block text-xs font-semibold text-ink/70 mb-2">What are you preparing for?</label>
                 <div class="grid grid-cols-3 gap-2">
                     <label class="level-option">
-                        <input wire:model="level" type="radio" value="scholarship">
+                        <input wire:model="level" name="level" type="radio" value="scholarship">
                         <span>Grade 5<br>Scholarship</span>
                     </label>
                     <label class="level-option">
-                        <input wire:model="level" type="radio" value="ol">
+                        <input wire:model="level" name="level" type="radio" value="ol">
                         <span>O/L</span>
                     </label>
                     <label class="level-option">
-                        <input wire:model="level" type="radio" value="al">
+                        <input wire:model="level" name="level" type="radio" value="al">
                         <span>A/L</span>
                     </label>
                 </div>
@@ -125,4 +142,5 @@ new #[Layout('layouts.guest')] class extends Component
 
         <p class="text-center text-sm text-ink/60 mt-6">Already have an account? <a href="{{ route('login') }}" wire:navigate class="text-teal font-semibold hover:underline">Log in</a></p>
     </div>
+</div>
 </div>
