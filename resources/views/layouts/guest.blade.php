@@ -15,8 +15,6 @@
         <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
-        @fluxStyles
-        @livewireStyles
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-examsheet-quiet text-ink antialiased min-h-screen flex flex-col" style="font-family: 'Inter', sans-serif;">
@@ -53,8 +51,5 @@
         </main>
 
         <footer class="text-center text-xs text-ink/40 pb-8">&copy; {{ date('Y') }} Papelo. Made for Sri Lankan students.</footer>
-
-        @fluxScripts
-        @livewireScripts
     </body>
 </html>
