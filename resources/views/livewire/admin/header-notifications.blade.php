@@ -45,7 +45,7 @@
             <div class="flex items-center justify-between mt-1.5">
               <span class="text-[10px] font-medium text-ink/40">{{ $notification['time'] }}</span>
               @if($notification['unread'])
-                <button wire:click="markAsRead({{ $notification['id'] }})" class="text-[10px] font-semibold text-teal/70 hover:text-teal focus:outline-none">Mark read</button>
+                <button wire:click="markAsRead('{{ $notification['id'] }}')" class="text-[10px] font-semibold text-teal/70 hover:text-teal focus:outline-none">Mark read</button>
               @endif
             </div>
           </div>

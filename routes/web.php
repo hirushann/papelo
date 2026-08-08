@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
+Route::view('/about', 'about')->name('about');
+Route::view('/contact', 'contact')->name('contact');
 Route::view('/terms', 'terms')->name('terms');
 Route::view('/privacy-policy', 'privacy')->name('privacy');
 
@@ -49,6 +51,10 @@ Route::get('admin/payments/{purchase}', \App\Livewire\Admin\TransactionDetail::c
 Route::get('admin/settings', \App\Livewire\Admin\Settings::class)
     ->middleware(['auth', 'admin'])
     ->name('admin.settings');
+
+Route::get('admin/messages', \App\Livewire\Admin\ContactSubmissions::class)
+    ->middleware(['auth', 'admin'])
+    ->name('admin.messages');
 
 Route::get('admin/papers', \App\Livewire\Admin\PaperManager::class)
     ->middleware(['auth', 'admin'])

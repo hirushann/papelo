@@ -27,6 +27,7 @@
                     <a href="#how" class="hover:text-ink">How it works</a>
                     <a href="{{ route('papers') }}" class="hover:text-ink">Papers</a>
                     <a href="#pricing" class="hover:text-ink">Pricing</a>
+                    <a href="{{ route('about') }}" class="hover:text-ink">About</a>
                 </nav>
                 <div class="flex items-center gap-3">
                     @auth
@@ -259,8 +260,8 @@
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-wide text-ink/40 mb-3">Company</p>
                     <ul class="space-y-2 text-sm text-ink/70">
-                        <li><a href="#" class="hover:text-ink">About</a></li>
-                        <li><a href="#" class="hover:text-ink">Contact</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-ink">About</a></li>
+                        <li><a href="{{ route('contact') }}" class="hover:text-ink">Contact</a></li>
                     </ul>
                 </div>
                 <div>

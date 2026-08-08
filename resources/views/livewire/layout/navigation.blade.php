@@ -38,6 +38,9 @@ new class extends Component
                     <x-nav-link :href="route('papers')" :active="request()->routeIs('papers')" wire:navigate>
                         {{ __('Exam Papers') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('about')" :active="request()->routeIs('about')" wire:navigate>
+                        {{ __('About') }}
+                    </x-nav-link>
                     @if(auth()->check() && auth()->user()->is_admin)
                         <x-nav-link :href="route('admin.questions')" :active="request()->routeIs('admin.questions')" wire:navigate>
                             {{ __('Question Manager') }}
@@ -105,6 +108,9 @@ new class extends Component
             @endif
             <x-responsive-nav-link :href="route('papers')" :active="request()->routeIs('papers')" wire:navigate>
                 {{ __('Exam Papers') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')" wire:navigate>
+                {{ __('About') }}
             </x-responsive-nav-link>
             @if(auth()->check() && auth()->user()->is_admin)
                 <x-responsive-nav-link :href="route('admin.questions')" :active="request()->routeIs('admin.questions')" wire:navigate>
