@@ -103,7 +103,7 @@
                 @foreach([0, 1, 2, 3] as $index)
                   <div class="flex items-center gap-3 border-1.5 border-ink/12 rounded-lg p-2 transition {{ $correctOption === (string)$index ? 'border-teal bg-teal/5' : 'bg-white' }}">
                     <div class="shrink-0 flex items-center justify-center">
-                      <input type="radio" wire:model="correctOption" value="{{ $index }}" id="opt_{{ $index }}" class="sr-only">
+                      <input type="radio" wire:model.live="correctOption" value="{{ $index }}" id="opt_{{ $index }}" class="sr-only">
                       <label for="opt_{{ $index }}" class="w-5 h-5 rounded-full border-2 border-ink/25 flex items-center justify-center cursor-pointer {{ $correctOption === (string)$index ? 'border-teal bg-teal' : 'hover:border-teal/50' }}">
                         @if($correctOption === (string)$index)
                           <span class="w-2 h-2 rounded-full bg-paper"></span>
