@@ -183,6 +183,13 @@
               </flux:modal.close>
           </div>
           <div class="p-6 space-y-5">
+              @if($successMessage)
+                <div class="rounded-lg bg-teal/10 border border-teal/20 p-4 flex items-start gap-3">
+                  <svg class="w-5 h-5 text-teal shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+                  <p class="text-sm font-medium text-teal">{{ $successMessage }}</p>
+                </div>
+              @endif
+
               <div class="text-sm text-ink/70">
                 <p class="mb-3">Upload a CSV file to bulk import questions. Note: Images cannot be imported via CSV; you must add them manually after importing.</p>
                 <button type="button" wire:click="downloadTemplate" class="text-teal font-semibold hover:underline flex items-center gap-1.5">

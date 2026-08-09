@@ -309,7 +309,7 @@ class QuestionManager extends Component
     public function importCsv()
     {
         $this->validate([
-            'importFile' => 'required|file|mimes:csv,txt|max:2048',
+            'importFile' => 'required|file|max:5120',
         ]);
 
         $filePath = $this->importFile->getRealPath();
