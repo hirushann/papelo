@@ -14,6 +14,13 @@
     </div>
   </x-slot>
 
+  @if(session('success'))
+    <div class="mb-5 rounded-lg bg-teal/10 border border-teal/20 p-4 flex items-start gap-3">
+      <svg class="w-5 h-5 text-teal shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+      <p class="text-sm font-medium text-teal">{{ session('success') }}</p>
+    </div>
+  @endif
+
   <div class="space-y-5">
     <!-- TOOLBAR -->
     <div class="flex flex-wrap items-center justify-between gap-3">
@@ -23,11 +30,23 @@
         <button wire:click="setLevelFilter('ol')" class="text-xs {{ $levelFilter === 'ol' ? 'font-semibold bg-ink text-paper' : 'font-medium border border-ink/15 text-ink/60 hover:border-teal/40' }} rounded-full px-3.5 py-1.5 transition">O/L</button>
         <button wire:click="setLevelFilter('al')" class="text-xs {{ $levelFilter === 'al' ? 'font-semibold bg-ink text-paper' : 'font-medium border border-ink/15 text-ink/60 hover:border-teal/40' }} rounded-full px-3.5 py-1.5 transition">A/L</button>
       </div>
-      <select wire:model.live="statusFilter" class="text-sm border border-ink/15 rounded-lg px-3 py-1.5 bg-white text-ink/70">
-        <option value="">All statuses</option>
-        <option value="Published">Published</option>
-        <option value="Draft">Draft</option>
-      </select>
+      <div class="flex items-center gap-2">
+        <button wire:click="exportCsv" class="inline-flex items-center gap-1.5 rounded-lg border border-ink/20 bg-white text-ink text-xs font-semibold px-3 py-1.5 hover:bg-ink/5 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          Export
+        </button>
+        <flux:modal.trigger name="import-paper">
+          <button class="inline-flex items-center gap-1.5 rounded-lg border border-ink/20 bg-white text-ink text-xs font-semibold px-3 py-1.5 hover:bg-ink/5 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+            Import
+          </button>
+        </flux:modal.trigger>
+        <select wire:model.live="statusFilter" class="text-sm border border-ink/15 rounded-lg px-3 py-1.5 bg-white text-ink/70">
+          <option value="">All statuses</option>
+          <option value="Published">Published</option>
+          <option value="Draft">Draft</option>
+        </select>
+      </div>
     </div>
 
     <!-- TABLE -->
@@ -181,6 +200,45 @@
               </flux:modal.close>
               <button type="submit" class="text-sm font-semibold bg-teal text-paper rounded-lg px-5 py-2.5 hover:bg-teal/90 transition">
                   Create &amp; add questions
+              </button>
+          </div>
+      </form>
+  </flux:modal>
+
+  <!-- IMPORT MODAL USING FLUX -->
+  <flux:modal name="import-paper" class="md:w-full md:max-w-md">
+      <form wire:submit="importCsv">
+          <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
+              <h2 class="font-display text-lg text-ink">Import Papers via CSV</h2>
+              <flux:modal.close>
+                <button type="button" class="text-ink/40 hover:text-ink text-xl leading-none">&times;</button>
+              </flux:modal.close>
+          </div>
+          <div class="p-6 space-y-5">
+              <div class="text-sm text-ink/70">
+                <p class="mb-3">Upload a CSV file to bulk import past papers. If a subject doesn't exist, it will be automatically created.</p>
+                <button type="button" wire:click="downloadTemplate" class="text-teal font-semibold hover:underline flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                  Download CSV Template
+                </button>
+              </div>
+
+              <flux:field>
+                  <flux:label>CSV File</flux:label>
+                  <input type="file" wire:model="importFile" accept=".csv" class="block w-full text-sm text-ink/70 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal/10 file:text-teal hover:file:bg-teal/20" />
+                  <flux:error name="importFile" />
+              </flux:field>
+              
+              <div wire:loading wire:target="importFile" class="text-xs text-teal font-medium">Uploading...</div>
+              <div wire:loading wire:target="importCsv" class="text-xs text-teal font-medium">Processing CSV...</div>
+          </div>
+          
+          <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-ink/10">
+              <flux:modal.close>
+                <button type="button" class="text-sm font-medium text-ink/60 hover:text-ink px-4 py-2">Cancel</button>
+              </flux:modal.close>
+              <button type="submit" class="text-sm font-semibold bg-teal text-paper rounded-lg px-5 py-2.5 hover:bg-teal/90 transition">
+                  Import Papers
               </button>
           </div>
       </form>
