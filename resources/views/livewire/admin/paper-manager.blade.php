@@ -56,6 +56,7 @@
           <tr class="text-left text-xs text-ink/40 border-b border-ink/10">
             <th class="font-medium px-6 py-3">Paper</th>
             <th class="font-medium px-6 py-3">Level</th>
+            <th class="font-medium px-6 py-3">Medium</th>
             <th class="font-medium px-6 py-3">Questions</th>
             <th class="font-medium px-6 py-3">Price</th>
             <th class="font-medium px-6 py-3">Attempts</th>
@@ -78,6 +79,7 @@
                   <span class="text-[11px] font-semibold uppercase text-ink/60 bg-ink/10 rounded-full px-2.5 py-0.5">{{ $paper->subject->level }}</span>
                 @endif
               </td>
+              <td class="px-6 py-3.5 capitalize text-ink/60">{{ $paper->subject->medium }}</td>
               <td class="px-6 py-3.5 text-ink/60">{{ $paper->questions_count }}</td>
               <td class="px-6 py-3.5 text-ink/60">Rs. {{ number_format($paper->price, 0) }}</td>
               <td class="px-6 py-3.5 text-ink/60">{{ $paper->attempts->count() }}</td>
@@ -99,7 +101,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="7" class="px-6 py-8 text-center text-ink/50 text-sm">
+              <td colspan="8" class="px-6 py-8 text-center text-ink/50 text-sm">
                 No papers found matching your criteria.
               </td>
             </tr>
