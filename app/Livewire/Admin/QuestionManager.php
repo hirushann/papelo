@@ -234,6 +234,137 @@ class QuestionManager extends Component
         $this->resetValidation();
     }
 
+    public $importFile;
+
+    public function downloadTemplate()
+    {
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=questions_template.csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['Question_Text', 'Topic_Tag', 'Option_1', 'Option_2', 'Option_3', 'Option_4', 'Correct_Option_Number_1_To_4'];
+
+        $callback = function() use($columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            
+            // Example row
+            fputcsv($file, ['What is the powerhouse of the cell?', 'Biology', 'Nucleus', 'Mitochondria', 'Ribosome', 'Endoplasmic Reticulum', '2']);
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportCsv()
+    {
+        $questions = Question::where('paper_id', $this->paper_id)->with('options')->orderBy('order_index')->get();
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=questions_export_" . date('Y-m-d') . ".csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['Question_Text', 'Topic_Tag', 'Option_1', 'Option_2', 'Option_3', 'Option_4', 'Correct_Option_Number_1_To_4'];
+
+        $callback = function() use($questions, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($questions as $question) {
+                $opts = $question->options->sortBy('order_index')->values();
+                $correctIndex = 1;
+                foreach ($opts as $idx => $opt) {
+                    if ($opt->is_correct) {
+                        $correctIndex = $idx + 1;
+                        break;
+                    }
+                }
+                
+                fputcsv($file, [
+                    $question->question_text,
+                    $question->topic_tag ?? '',
+                    $opts[0]->option_text ?? '',
+                    $opts[1]->option_text ?? '',
+                    $opts[2]->option_text ?? '',
+                    $opts[3]->option_text ?? '',
+                    $correctIndex
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function importCsv()
+    {
+        $this->validate([
+            'importFile' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        $filePath = $this->importFile->getRealPath();
+        $file = fopen($filePath, 'r');
+        $header = fgetcsv($file);
+
+        $importedCount = 0;
+        $nextOrder = ($this->questions->max('order_index') ?? 0) + 1;
+
+        while ($row = fgetcsv($file)) {
+            if (count($row) < 7) continue;
+
+            $questionText = trim($row[0]);
+            $topicTag = trim($row[1]);
+            $option1 = trim($row[2]);
+            $option2 = trim($row[3]);
+            $option3 = trim($row[4]);
+            $option4 = trim($row[5]);
+            $correctNum = (int) trim($row[6]);
+
+            if (!$questionText || !$option1 || !$option2 || !$option3 || !$option4 || !in_array($correctNum, [1, 2, 3, 4])) {
+                continue; // Skip invalid row
+            }
+
+            $question = Question::create([
+                'paper_id' => $this->paper_id,
+                'question_text' => $questionText,
+                'topic_tag' => $topicTag ?: null,
+                'order_index' => $nextOrder++,
+            ]);
+
+            $options = [$option1, $option2, $option3, $option4];
+            foreach ($options as $index => $optText) {
+                Option::create([
+                    'question_id' => $question->id,
+                    'option_text' => $optText,
+                    'is_correct' => ($correctNum === $index + 1),
+                    'order_index' => $index + 1,
+                ]);
+            }
+
+            $importedCount++;
+        }
+
+        fclose($file);
+        $this->reset('importFile');
+        $this->successMessage = "$importedCount questions imported successfully!";
+        unset($this->questions);
+        
+        $firstQuestion = $this->questions->first();
+        if ($firstQuestion) {
+            $this->editQuestion($firstQuestion->id);
+        }
+    }
+
     public function render()
     {
         return view('livewire.admin.question-manager');
