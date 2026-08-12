@@ -29,9 +29,25 @@ class PaperManager extends Component
     public $newTitle = '';
     public $newStatus = 'Draft';
 
+    // Edit Paper Form
+    public $editPaperId;
+    public $editLevel;
+    public $editMedium;
+    public $editYear;
+    public $editSubject;
+    public $editDuration;
+    public $editPrice;
+    public $editTitle;
+    public $editStatus;
+
     public function mount()
     {
         $this->newYear = date('Y');
+        
+        $defaultPriceSetting = \App\Models\Setting::where('key', 'defaultPrice')->first();
+        if ($defaultPriceSetting) {
+            $this->newPrice = (int) $defaultPriceSetting->value;
+        }
     }
 
     public function updatingSearch()
@@ -79,12 +95,84 @@ class PaperManager extends Component
             'is_published' => $this->newStatus === 'Published',
         ]);
 
+        if ($paper->is_published) {
+            \Illuminate\Support\Facades\Notification::send(
+                \App\Models\User::where('is_admin', true)->get(),
+                new \App\Notifications\AdminPaperPublishedNotification($paper)
+            );
+        }
+
         $this->reset(['newLevel', 'newMedium', 'newSubject', 'newDuration', 'newPrice', 'newTitle']);
         $this->newYear = date('Y');
         $this->newStatus = 'Draft';
 
         // Redirect to question manager for this paper
         return redirect()->route('admin.questions', ['paper_id' => $paper->id]);
+    }
+
+    public function editPaper($id)
+    {
+        $paper = Paper::with('subject')->findOrFail($id);
+        
+        $this->editPaperId = $paper->id;
+        $this->editLevel = $paper->subject->level;
+        $this->editMedium = $paper->subject->medium;
+        $this->editYear = $paper->year;
+        $this->editSubject = $paper->subject->name;
+        $this->editDuration = $paper->duration_minutes;
+        $this->editPrice = $paper->price;
+        $this->editTitle = $paper->title;
+        $this->editStatus = $paper->is_published ? 'Published' : 'Draft';
+        
+        \Flux::modal('edit-paper')->show();
+    }
+    
+    public function updatePaper()
+    {
+        $this->validate([
+            'editLevel' => 'required|in:scholarship,ol,al',
+            'editMedium' => 'required|in:english,sinhala,tamil',
+            'editYear' => 'required|integer|min:2000|max:2100',
+            'editSubject' => 'required|string|max:255',
+            'editDuration' => 'required|integer|min:1',
+            'editPrice' => 'required|numeric|min:0',
+            'editTitle' => 'nullable|string|max:255',
+            'editStatus' => 'required|in:Draft,Published',
+        ]);
+        
+        $paper = Paper::findOrFail($this->editPaperId);
+        
+        $subject = Subject::firstOrCreate(
+            [
+                'name' => $this->editSubject,
+                'level' => $this->editLevel,
+                'medium' => $this->editMedium
+            ],
+            [
+                'slug' => Str::slug($this->editSubject . '-' . $this->editLevel . '-' . $this->editMedium)
+            ]
+        );
+        
+        $wasPublished = $paper->is_published;
+
+        $paper->update([
+            'subject_id' => $subject->id,
+            'year' => $this->editYear,
+            'title' => $this->editTitle ?: ($subject->name . ' ' . $this->editYear),
+            'price' => $this->editPrice,
+            'duration_minutes' => $this->editDuration,
+            'is_published' => $this->editStatus === 'Published',
+        ]);
+        
+        if (!$wasPublished && $paper->is_published) {
+            \Illuminate\Support\Facades\Notification::send(
+                \App\Models\User::where('is_admin', true)->get(),
+                new \App\Notifications\AdminPaperPublishedNotification($paper)
+            );
+        }
+        
+        session()->flash('success', 'Paper details updated successfully.');
+        \Flux::modal('edit-paper')->close();
     }
 
     public $importFile;

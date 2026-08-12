@@ -2,26 +2,45 @@
     <div class="max-w-3xl mx-auto px-6 py-12">
         <div class="bg-white rounded-2xl border border-ink/10 shadow-xl shadow-ink/5 p-8">
             <h1 class="font-display text-3xl text-ink mb-6">Privacy Policy</h1>
-            
             <div class="prose prose-sm prose-slate text-ink/70">
-                <p class="mb-4">Last updated: {{ date('F j, Y') }}</p>
+                <p>At Papelo, we are committed to protecting the privacy and security of our customers' personal information. This Privacy Policy outlines how we collect, use, and safeguard your information when you visit or make a purchase on our website. By using our website, you consent to the practices described in this policy.</p>
 
-                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">1. Information We Collect</h2>
-                <p class="mb-4">We collect information you provide directly to us, such as when you create or modify your account, purchase a past paper, request customer support, or otherwise communicate with us. This information may include your name, email address, password, educational level, and any other information you choose to provide.</p>
+                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Information We Collect</h2>
+                <p>When you visit our website, we may collect certain information about you, including:</p>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>Personal identification information (such as your name, email address, and phone number) provided voluntarily by you during the registration or checkout process.</li>
+                    <li>Payment and billing information necessary to process your orders, including credit card details, which are securely handled by trusted third-party payment processors.</li>
+                    <li>Browsing information, such as your IP address, browser type, and device information, collected automatically using cookies and similar technologies.</li>
+                </ul>
 
-                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">2. How We Use Your Information</h2>
-                <p class="mb-4">We use the information we collect to provide, maintain, and improve our services, such as to administer your account, process transactions, calculate and deliver analytics based on your exam performance, and send you related information, including confirmations and receipts.</p>
+                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Use of Information</h2>
+                <p>We may use the collected information for the following purposes:</p>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>To process and fulfill your orders, including shipping and delivery.</li>
+                    <li>To communicate with you regarding your purchases, provide customer support, and respond to inquiries or requests.</li>
+                    <li>To personalize your shopping experience and present relevant product recommendations and promotions.</li>
+                    <li>To improve our website, products, and services based on your feedback and browsing patterns.</li>
+                    <li>To detect and prevent fraud, unauthorized activities, and abuse of our website.</li>
+                </ul>
 
-                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">3. Exam Analytics</h2>
-                <p class="mb-4">A core feature of Papelo is providing analytics based on your exam attempts. We store your answers, calculate scores, and analyze your performance across different topics to provide personalized feedback and recommendations.</p>
+                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Information Sharing</h2>
+                <p>We respect your privacy and do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except in the following circumstances:</p>
+                <ul class="list-disc pl-5 mb-4">
+                    <li><strong>Trusted service providers:</strong> We may share your information with third-party service providers who assist us in operating our website, processing payments, and delivering products. These providers are contractually obligated to handle your data securely and confidentially.</li>
+                    <li><strong>Legal requirements:</strong> We may disclose your information if required to do so by law or in response to valid legal requests or orders.</li>
+                </ul>
 
-                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">4. Information Sharing</h2>
-                <p class="mb-4">We do not share, sell, rent, or trade your personal information with third parties for their commercial purposes. We may share information with trusted third-party service providers (such as payment processors like PayHere) who need access to such information to carry out work on our behalf.</p>
+                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Data Security</h2>
+                <p>We implement industry-standard security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. However, please be aware that no method of transmission over the internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
 
-                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">5. Data Security</h2>
-                <p class="mb-4">We take reasonable measures to help protect information about you from loss, theft, misuse and unauthorized access, disclosure, alteration and destruction. However, no data transmission over the internet or information storage technology can be guaranteed to be 100% secure.</p>
-                
-                <p class="mt-8 pt-6 border-t border-ink/10 text-xs">If you have any questions about this Privacy Policy, please contact us at privacy@papelo.lk.</p>
+                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Cookies and Tracking Technologies</h2>
+                <p>We use cookies and similar technologies to enhance your browsing experience, analyze website traffic, and gather information about your preferences and interactions with our website. You have the option to disable cookies through your browser settings, but this may limit certain features and functionality of our website.</p>
+
+                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Changes to the Privacy Policy</h2>
+                <p>We reserve the right to update or modify this Privacy Policy at any time. Any changes will be posted on this page with a revised "last updated" date. We encourage you to review this Privacy Policy periodically to stay informed about how we collect, use, and protect your information.</p>
+
+                <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Contact Us</h2>
+                <p>If you have any questions, concerns, or requests regarding our Privacy Policy or the handling of your personal information, please contact us at support@papelo.lk.</p>
             </div>
         </div>
     </div>

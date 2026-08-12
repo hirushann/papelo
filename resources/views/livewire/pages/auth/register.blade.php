@@ -60,6 +60,14 @@ new #[Layout('layouts.guest')] class extends Component
         event(new Registered($user));
         Auth::login($user);
 
+        // Notify admins if this is a student
+        if (!$user->is_admin) {
+            \Illuminate\Support\Facades\Notification::send(
+                User::where('is_admin', true)->get(),
+                new \App\Notifications\AdminNewStudentNotification($user)
+            );
+        }
+
         $redirectRoute = $user->is_admin ? route('admin.dashboard', absolute: false) : route('papers', absolute: false);
         $this->redirect($redirectRoute, navigate: true);
     }

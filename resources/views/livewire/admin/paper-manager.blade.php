@@ -92,8 +92,11 @@
               </td>
               <td class="px-6 py-3.5">
                 <div class="flex items-center justify-end gap-3 text-ink/40">
-                  <a href="{{ route('admin.questions', ['paper_id' => $paper->id]) }}" class="hover:text-teal" title="Manage Questions">
+                  <button wire:click="editPaper({{ $paper->id }})" class="hover:text-teal" title="Edit Paper Details">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  </button>
+                  <a href="{{ route('admin.questions', ['paper_id' => $paper->id]) }}" class="hover:text-teal" title="Manage Questions">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
                   </a>
                   <button class="hover:text-margin" title="Delete Paper"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg></button>
                 </div>
@@ -202,6 +205,94 @@
               </flux:modal.close>
               <button type="submit" class="text-sm font-semibold bg-teal text-paper rounded-lg px-5 py-2.5 hover:bg-teal/90 transition">
                   Create &amp; add questions
+              </button>
+          </div>
+      </form>
+  </flux:modal>
+
+  <!-- EDIT MODAL USING FLUX -->
+  <flux:modal name="edit-paper" class="md:w-full md:max-w-lg">
+      <form wire:submit="updatePaper">
+          <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
+              <h2 class="font-display text-lg text-ink">Edit Paper Details</h2>
+              <flux:modal.close>
+                <button type="button" class="text-ink/40 hover:text-ink text-xl leading-none">&times;</button>
+              </flux:modal.close>
+          </div>
+          <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              <div class="grid grid-cols-3 gap-4">
+                  <div>
+                      <flux:field>
+                          <flux:label>Exam level</flux:label>
+                          <flux:select wire:model="editLevel">
+                              <option value="scholarship">Grade 5 Scholarship</option>
+                              <option value="ol">O/L</option>
+                              <option value="al">A/L</option>
+                          </flux:select>
+                          <flux:error name="editLevel" />
+                      </flux:field>
+                  </div>
+                  <div>
+                      <flux:field>
+                          <flux:label>Medium</flux:label>
+                          <flux:select wire:model="editMedium">
+                              <option value="english">English</option>
+                              <option value="sinhala">Sinhala</option>
+                              <option value="tamil">Tamil</option>
+                          </flux:select>
+                          <flux:error name="editMedium" />
+                      </flux:field>
+                  </div>
+                  <div>
+                      <flux:field>
+                          <flux:label>Year</flux:label>
+                          <flux:input type="number" wire:model="editYear" min="2000" max="2100" />
+                          <flux:error name="editYear" />
+                      </flux:field>
+                  </div>
+              </div>
+              
+              <flux:field>
+                  <flux:label>Subject</flux:label>
+                  <flux:input wire:model="editSubject" placeholder="e.g. Science" />
+                  <flux:error name="editSubject" />
+              </flux:field>
+
+              <div class="grid grid-cols-2 gap-4">
+                  <flux:field>
+                      <flux:label>Duration (minutes)</flux:label>
+                      <flux:input type="number" wire:model="editDuration" min="1" />
+                      <flux:error name="editDuration" />
+                  </flux:field>
+                  <flux:field>
+                      <flux:label>Price (Rs.)</flux:label>
+                      <flux:input type="number" wire:model="editPrice" min="0" />
+                      <flux:error name="editPrice" />
+                  </flux:field>
+              </div>
+
+              <flux:field>
+                  <flux:label>Topics covered / Title</flux:label>
+                  <flux:input wire:model="editTitle" placeholder="Cells & Genetics, Forces & Motion, …" />
+                  <flux:error name="editTitle" />
+              </flux:field>
+
+              <flux:field>
+                  <flux:label>Status</flux:label>
+                  <flux:select wire:model="editStatus">
+                      <option value="Draft">Draft</option>
+                      <option value="Published">Published</option>
+                  </flux:select>
+                  <flux:error name="editStatus" />
+              </flux:field>
+          </div>
+          
+          <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-ink/10">
+              <flux:modal.close>
+                <button type="button" class="text-sm font-medium text-ink/60 hover:text-ink px-4 py-2">Cancel</button>
+              </flux:modal.close>
+              <button type="submit" class="text-sm font-semibold bg-teal text-paper rounded-lg px-5 py-2.5 hover:bg-teal/90 transition">
+                  Save Changes
               </button>
           </div>
       </form>

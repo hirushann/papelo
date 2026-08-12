@@ -17,7 +17,8 @@ class PaymentController extends Controller
         $statusCode = $request->input('status_code');
         $md5sigReceived = $request->input('md5sig');
 
-        $merchantSecret = config('services.payhere.merchant_secret');
+        $merchantSecretSetting = \App\Models\Setting::where('key', 'merchantSecret')->first();
+        $merchantSecret = $merchantSecretSetting ? $merchantSecretSetting->value : config('services.payhere.merchant_secret');
         
         $md5sig = strtoupper(md5(
             $merchantId . 
@@ -42,6 +43,11 @@ class PaymentController extends Controller
                 } elseif ($statusCode < 0) {
                     $purchase->update(['status' => 'failed']);
                     Log::info("PayHere webhook: Payment failed for order $orderId");
+                    
+                    \Illuminate\Support\Facades\Notification::send(
+                        \App\Models\User::where('is_admin', true)->get(),
+                        new \App\Notifications\AdminFailedPaymentNotification($purchase)
+                    );
                 }
             } else {
                 Log::warning("PayHere webhook: Order $orderId not found");

@@ -118,6 +118,7 @@
       <ul class="space-y-2 text-sm text-ink/70">
         <li><a href="{{ route('terms') }}" class="hover:text-ink">Terms</a></li>
         <li><a href="{{ route('privacy') }}" class="hover:text-ink">Privacy</a></li>
+        <li><a href="{{ route('refund') }}" class="hover:text-ink">Refund Policy</a></li>
       </ul>
     </div>
   </div>

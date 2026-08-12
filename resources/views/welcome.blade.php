@@ -6,6 +6,19 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Papelo') }} — Practice past papers. Get instant results.</title>
+        <meta name="description" content="Papelo is the ultimate online platform for Sri Lankan students to practice past exam papers as interactive MCQs with instant scoring and topic analytics.">
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:title" content="{{ config('app.name', 'Papelo') }} — Practice past papers. Get instant results.">
+        <meta property="og:description" content="Papelo is the ultimate online platform for Sri Lankan students to practice past exam papers as interactive MCQs with instant scoring and topic analytics.">
+        
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="{{ url()->current() }}">
+        <meta property="twitter:title" content="{{ config('app.name', 'Papelo') }} — Practice past papers. Get instant results.">
+        <meta property="twitter:description" content="Papelo is the ultimate online platform for Sri Lankan students to practice past exam papers as interactive MCQs with instant scoring and topic analytics.">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,7 +90,7 @@
                         </div>
                     </div>
 
-                    <div class="float absolute -bottom-8 -left-8 bg-ink text-paper rounded-xl shadow-xl p-5 w-48">
+                    <div class="float absolute -bottom-8 -right-8 bg-ink text-paper rounded-xl shadow-xl p-5 w-48">
                         <p class="text-xs text-paper/60 mb-1">Your score</p>
                         <p class="font-display text-3xl mb-1">92%</p>
                         <p class="text-xs text-paper/60">18 / 20 correct</p>
@@ -267,8 +280,9 @@
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-wide text-ink/40 mb-3">Legal</p>
                     <ul class="space-y-2 text-sm text-ink/70">
-                        <li><a href="#" class="hover:text-ink">Terms</a></li>
-                        <li><a href="#" class="hover:text-ink">Privacy</a></li>
+                        <li><a href="{{ route('terms') }}" class="hover:text-ink">Terms</a></li>
+                        <li><a href="{{ route('privacy') }}" class="hover:text-ink">Privacy</a></li>
+                        <li><a href="{{ route('refund') }}" class="hover:text-ink">Refund Policy</a></li>
                     </ul>
                 </div>
             </div>

@@ -6,9 +6,14 @@
 
   @if($paper_id && $this->paper)
     <header class="h-16 bg-white border-b border-ink/10 flex items-center justify-between px-8 flex-shrink-0 w-full">
-      <div>
-        <p class="text-[11px] text-ink/40"><a href="{{ route('admin.papers') }}" wire:navigate class="hover:text-teal">Papers</a> / {{ $this->paper->subject->level ?? '' }} {{ $this->paper->subject->name ?? '' }} {{ $this->paper->year ?? '' }}</p>
-        <h1 class="font-display text-lg text-ink -mt-0.5">Question Editor</h1>
+      <div class="flex items-center gap-4">
+        <button wire:click="$set('paper_id', '')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-ink/5 text-ink/40 hover:text-ink transition -ml-2" title="Back to paper selection">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+        </button>
+        <div>
+          <p class="text-[11px] text-ink/40"><a href="{{ route('admin.papers') }}" wire:navigate class="hover:text-teal">Papers</a> / {{ $this->paper->subject->level ?? '' }} {{ $this->paper->subject->name ?? '' }} {{ $this->paper->year ?? '' }}</p>
+          <h1 class="font-display text-lg text-ink -mt-0.5">Question Editor</h1>
+        </div>
       </div>
       <div class="flex items-center gap-3">
         <flux:modal.trigger name="import-questions">
@@ -166,10 +171,20 @@
     <div class="flex flex-col items-center justify-center w-full flex-1 bg-[#F7F4EC] text-ink/60">
       <svg class="w-16 h-16 mb-4 text-ink/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
       <p class="text-lg font-medium text-ink/80 mb-2">Select a paper to manage its questions</p>
-      <p class="text-sm">Since questions are attached to a specific paper, you must select one first.</p>
-      <a href="{{ route('admin.papers') }}" wire:navigate class="mt-6 inline-flex items-center rounded-lg bg-teal text-paper text-sm font-semibold px-5 py-2.5 hover:bg-teal/90 transition">
-        Go to Papers &rarr;
-      </a>
+      <p class="text-sm mb-6">Since questions are attached to a specific paper, you must select one first.</p>
+      
+      <div class="w-full max-w-sm">
+        <select wire:model.live="paper_id" class="w-full border border-ink/15 rounded-lg px-4 py-3 text-sm bg-white text-ink/70 focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal cursor-pointer">
+          <option value="">-- Choose a Paper --</option>
+          @foreach($this->allPapers as $paperOption)
+            <option value="{{ $paperOption->id }}">{{ $paperOption->title }} ({{ $paperOption->year }})</option>
+          @endforeach
+        </select>
+      </div>
+
+      <div class="mt-8 text-xs text-ink/40">
+        Or <a href="{{ route('admin.papers') }}" wire:navigate class="hover:text-teal underline">go back to Papers</a>
+      </div>
     </div>
   @endif
 

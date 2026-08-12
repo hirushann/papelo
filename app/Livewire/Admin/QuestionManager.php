@@ -58,6 +58,24 @@ class QuestionManager extends Component
     }
 
     #[Computed]
+    public function allPapers()
+    {
+        return Paper::latest()->get();
+    }
+    
+    public function updatedPaperId()
+    {
+        if ($this->paper_id) {
+            $firstQuestion = $this->questions->first();
+            if ($firstQuestion) {
+                $this->editQuestion($firstQuestion->id);
+            } else {
+                $this->showAddForm();
+            }
+        }
+    }
+
+    #[Computed]
     public function questions()
     {
         return Question::where('paper_id', $this->paper_id)

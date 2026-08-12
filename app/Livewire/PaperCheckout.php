@@ -50,8 +50,12 @@ class PaperCheckout extends Component
             ]
         );
 
-        $merchantId = config('services.payhere.merchant_id');
-        $merchantSecret = config('services.payhere.merchant_secret');
+        $merchantIdSetting = \App\Models\Setting::where('key', 'merchantId')->first();
+        $merchantId = $merchantIdSetting ? $merchantIdSetting->value : config('services.payhere.merchant_id');
+
+        $merchantSecretSetting = \App\Models\Setting::where('key', 'merchantSecret')->first();
+        $merchantSecret = $merchantSecretSetting ? $merchantSecretSetting->value : config('services.payhere.merchant_secret');
+
         $currency = 'LKR';
         $orderId = (string) $purchase->id;
         $amountFormatted = number_format($this->paper->price, 2, '.', '');
@@ -71,6 +75,9 @@ class PaperCheckout extends Component
             'final_hash' => $hash,
         ]);
 
+        $modeSetting = \App\Models\Setting::where('key', 'payhereMode')->first();
+        $isSandbox = $modeSetting ? ($modeSetting->value === 'Sandbox') : config('services.payhere.sandbox');
+
         // Dispatch browser event to submit the form
         $this->dispatch('initiate-payhere', [
             'merchant_id' => $merchantId,
@@ -89,7 +96,7 @@ class PaperCheckout extends Component
             'city' => $this->city,
             'country' => $this->country,
             'hash' => $hash,
-            'url' => config('services.payhere.sandbox') ? 'https://sandbox.payhere.lk/pay/checkout' : 'https://www.payhere.lk/pay/checkout'
+            'url' => $isSandbox ? 'https://sandbox.payhere.lk/pay/checkout' : 'https://www.payhere.lk/pay/checkout'
         ]);
     }
 

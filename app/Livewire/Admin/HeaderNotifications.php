@@ -35,36 +35,21 @@ class HeaderNotifications extends Component
             ];
         }
 
-        // Mock notifications for the UI (can be removed later when other systems are real)
-        $mockNotifications = [
-            [
-                'id' => 'mock_1',
-                'title' => 'New student sign-up',
-                'description' => 'John Doe just registered an account.',
-                'time' => '2 mins ago',
-                'unread' => true,
-                'type' => 'user'
-            ],
-            [
-                'id' => 'mock_2',
-                'title' => 'Payment successful',
-                'description' => 'Jane Smith purchased Grade 5 Model Paper.',
-                'time' => '1 hour ago',
-                'unread' => true,
-                'type' => 'payment'
-            ],
-            [
-                'id' => 'mock_3',
-                'title' => 'Failed payment',
-                'description' => 'A payment for O/L Science failed.',
-                'time' => '2 hours ago',
-                'unread' => false,
-                'type' => 'error'
-            ],
-        ];
-
-        // Merge them
-        $this->notifications = array_merge($this->notifications, $mockNotifications);
+        // Fetch real unread database notifications
+        $user = auth()->user();
+        if ($user) {
+            foreach ($user->unreadNotifications as $notification) {
+                $this->notifications[] = [
+                    'id' => 'db_' . $notification->id,
+                    'title' => $notification->data['title'] ?? 'Notification',
+                    'description' => $notification->data['description'] ?? '',
+                    'time' => $notification->created_at->diffForHumans(),
+                    'unread' => true,
+                    'type' => $notification->data['type'] ?? 'user',
+                    'link' => $notification->data['link'] ?? '#'
+                ];
+            }
+        }
     }
 
     public function markAsRead($id)
@@ -75,6 +60,15 @@ class HeaderNotifications extends Component
             if ($submission) {
                 $submission->is_read = true;
                 $submission->save();
+            }
+        } elseif (str_starts_with($id, 'db_')) {
+            $realId = str_replace('db_', '', $id);
+            $user = auth()->user();
+            if ($user) {
+                $notification = $user->unreadNotifications()->where('id', $realId)->first();
+                if ($notification) {
+                    $notification->markAsRead();
+                }
             }
         }
 
@@ -88,6 +82,11 @@ class HeaderNotifications extends Component
     public function markAllAsRead()
     {
         ContactSubmission::where('is_read', false)->update(['is_read' => true]);
+
+        $user = auth()->user();
+        if ($user) {
+            $user->unreadNotifications->markAsRead();
+        }
 
         foreach ($this->notifications as $key => $notification) {
             $this->notifications[$key]['unread'] = false;

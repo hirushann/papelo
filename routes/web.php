@@ -7,6 +7,7 @@ Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
 Route::view('/terms', 'terms')->name('terms');
 Route::view('/privacy-policy', 'privacy')->name('privacy');
+Route::view('/refund-policy', 'refund')->name('refund');
 
 Route::get('/dashboard', \App\Livewire\StudentDashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/progress', \App\Livewire\ProgressReport::class)->middleware(['auth', 'verified'])->name('progress');
@@ -78,4 +79,6 @@ Route::get('result/{attempt}/review', \App\Livewire\DetailedReview::class)
 
 require __DIR__.'/auth.php';
 
-
+Route::get('/sitemap.xml', function() {
+    return response()->view('sitemap')->header('Content-Type', 'text/xml');
+});

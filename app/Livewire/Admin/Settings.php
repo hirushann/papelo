@@ -5,6 +5,8 @@ namespace App\Livewire\Admin;
 use App\Models\Setting;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Computed;
 
 #[Layout('layouts.admin', ['header' => 'Settings'])]
 class Settings extends Component
@@ -32,6 +34,17 @@ class Settings extends Component
 
     public string $successMessage = '';
 
+    // Admin Invite
+    public string $inviteName = '';
+    public string $inviteEmail = '';
+    public string $invitePassword = '';
+
+    #[Computed]
+    public function admins()
+    {
+        return \App\Models\User::where('is_admin', true)->orderBy('created_at', 'asc')->get();
+    }
+
     public function mount()
     {
         $settings = Setting::pluck('value', 'key')->toArray();
@@ -58,6 +71,7 @@ class Settings extends Component
         $this->notifyWeeklySummary = isset($settings['notifyWeeklySummary']) ? (bool)$settings['notifyWeeklySummary'] : $this->notifyWeeklySummary;
     }
 
+    #[On('save-settings')]
     public function saveSettings()
     {
         $keys = [
@@ -75,12 +89,34 @@ class Settings extends Component
         }
 
         $this->successMessage = 'Settings saved successfully!';
+        $this->dispatch('settings-saved');
     }
 
     public function exportData()
     {
         // Mock export logic
         $this->successMessage = 'Data export started. You will receive an email shortly.';
+        $this->dispatch('export-started');
+    }
+
+    public function inviteAdmin()
+    {
+        $this->validate([
+            'inviteName' => 'required|string|max:255',
+            'inviteEmail' => 'required|email|unique:users,email',
+            'invitePassword' => 'required|string|min:8',
+        ]);
+
+        \App\Models\User::create([
+            'name' => $this->inviteName,
+            'email' => strtolower($this->inviteEmail),
+            'password' => \Illuminate\Support\Facades\Hash::make($this->invitePassword),
+            'is_admin' => true,
+        ]);
+
+        $this->reset(['inviteName', 'inviteEmail', 'invitePassword']);
+        $this->dispatch('admin-invited');
+        \Flux::modal('invite-admin')->close();
     }
 
     public function render()
