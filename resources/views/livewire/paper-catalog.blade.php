@@ -79,6 +79,46 @@
             <input type="radio" wire:model.live="filterLevel" value="al" name="level"> A/L
           </label>
         </div>
+
+        <div class="mt-8 space-y-2">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-ink/40 mb-3">Medium</h3>
+          <label class="filter-check">
+            <input type="radio" wire:model.live="filterMedium" value="" name="medium"> All Mediums
+          </label>
+          <label class="filter-check">
+            <input type="radio" wire:model.live="filterMedium" value="english" name="medium"> English
+          </label>
+          <label class="filter-check">
+            <input type="radio" wire:model.live="filterMedium" value="sinhala" name="medium"> Sinhala
+          </label>
+          <label class="filter-check">
+            <input type="radio" wire:model.live="filterMedium" value="tamil" name="medium"> Tamil
+          </label>
+        </div>
+
+        <div class="mt-8 space-y-2">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-ink/40 mb-3">Year</h3>
+          <label class="filter-check">
+            <input type="radio" wire:model.live="filterYear" value="" name="year"> All Years
+          </label>
+          @foreach($this->availableYears as $year)
+          <label class="filter-check">
+            <input type="radio" wire:model.live="filterYear" value="{{ $year }}" name="year"> {{ $year }}
+          </label>
+          @endforeach
+        </div>
+
+        <div class="mt-8 space-y-2">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-ink/40 mb-3">Subject</h3>
+          <label class="filter-check">
+            <input type="radio" wire:model.live="filterSubject" value="" name="subject"> All Subjects
+          </label>
+          @foreach($this->availableSubjects as $subject)
+          <label class="filter-check">
+            <input type="radio" wire:model.live="filterSubject" value="{{ $subject->id }}" name="subject"> {{ $subject->name }}
+          </label>
+          @endforeach
+        </div>
       </aside>
 
       <!-- RESULTS -->

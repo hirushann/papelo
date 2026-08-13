@@ -204,7 +204,7 @@ class PaperManager extends Component
 
     public function exportCsv()
     {
-        $query = Paper::query()->with('subject');
+        $query = Paper::query()->with(['subject', 'questions.options']);
         
         if ($this->search) {
             $query->where(function ($q) {
@@ -230,20 +230,23 @@ class PaperManager extends Component
 
         $headers = [
             "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=papers_export_" . date('Y-m-d') . ".csv",
+            "Content-Disposition" => "attachment; filename=papelo_export_" . date('Y-m-d') . ".csv",
             "Pragma"              => "no-cache",
             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
             "Expires"             => "0"
         ];
 
-        $columns = ['Subject', 'Level', 'Medium', 'Year', 'Title', 'Duration_Minutes', 'Price', 'Status'];
+        $columns = [
+            'Subject_Name', 'Level', 'Medium', 'Year', 'Paper_Title', 'Duration_Minutes', 'Price', 'Status',
+            'Question_Text', 'Topic_Tag', 'Option_1', 'Option_2', 'Option_3', 'Option_4', 'Correct_Option_Number_1_To_4'
+        ];
 
         $callback = function() use($papers, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
             foreach ($papers as $paper) {
-                fputcsv($file, [
+                $paperData = [
                     $paper->subject->name ?? '',
                     $paper->subject->level ?? '',
                     $paper->subject->medium ?? '',
@@ -252,7 +255,31 @@ class PaperManager extends Component
                     $paper->duration_minutes,
                     $paper->price,
                     $paper->is_published ? 'Published' : 'Draft'
-                ]);
+                ];
+
+                if ($paper->questions->isEmpty()) {
+                    fputcsv($file, array_merge($paperData, ['', '', '', '', '', '', '']));
+                } else {
+                    foreach ($paper->questions->sortBy('order_index') as $question) {
+                        $opts = $question->options->sortBy('order_index')->values();
+                        $correctIndex = 1;
+                        foreach ($opts as $idx => $opt) {
+                            if ($opt->is_correct) {
+                                $correctIndex = $idx + 1;
+                                break;
+                            }
+                        }
+                        fputcsv($file, array_merge($paperData, [
+                            $question->question_text,
+                            $question->topic_tag ?? '',
+                            $opts[0]->option_text ?? '',
+                            $opts[1]->option_text ?? '',
+                            $opts[2]->option_text ?? '',
+                            $opts[3]->option_text ?? '',
+                            $correctIndex
+                        ]));
+                    }
+                }
             }
 
             fclose($file);
@@ -271,9 +298,11 @@ class PaperManager extends Component
         $file = fopen($filePath, 'r');
         $header = fgetcsv($file);
 
-        $importedCount = 0;
+        $importedPapers = 0;
+        $importedQuestions = 0;
+        
         while ($row = fgetcsv($file)) {
-            if (count($row) < 8) continue;
+            if (count($row) < 15) continue;
 
             $subjectName = trim($row[0]);
             $level = trim($row[1]);
@@ -283,6 +312,14 @@ class PaperManager extends Component
             $duration = trim($row[5]);
             $price = trim($row[6]);
             $status = trim($row[7]);
+            
+            $questionText = trim($row[8]);
+            $topicTag = trim($row[9]);
+            $option1 = trim($row[10]);
+            $option2 = trim($row[11]);
+            $option3 = trim($row[12]);
+            $option4 = trim($row[13]);
+            $correctNum = (int) trim($row[14]);
 
             if (!$subjectName || !in_array($level, ['scholarship', 'ol', 'al']) || !in_array($medium, ['english', 'sinhala', 'tamil'])) {
                 continue; // Skip invalid row
@@ -299,21 +336,71 @@ class PaperManager extends Component
                 ]
             );
 
-            Paper::create([
-                'subject_id' => $subject->id,
-                'year' => (int) $year,
-                'title' => $title ?: ($subject->name . ' ' . $year),
-                'duration_minutes' => (int) $duration,
-                'price' => (float) $price,
-                'is_published' => strtolower($status) === 'published',
-            ]);
+            $paper = Paper::firstOrCreate(
+                [
+                    'subject_id' => $subject->id,
+                    'year' => (int) $year,
+                    'title' => $title ?: ($subject->name . ' ' . $year),
+                ],
+                [
+                    'duration_minutes' => (int) $duration,
+                    'price' => (float) $price,
+                    'is_published' => strtolower($status) === 'published',
+                ]
+            );
+            
+            if (!$paper->wasRecentlyCreated) {
+                $paper->update([
+                    'duration_minutes' => (int) $duration,
+                    'price' => (float) $price,
+                    'is_published' => strtolower($status) === 'published',
+                ]);
+            } else {
+                $importedPapers++;
+            }
 
-            $importedCount++;
+            if ($questionText && $option1 && $option2 && $option3 && $option4 && in_array($correctNum, [1, 2, 3, 4])) {
+                
+                $question = \App\Models\Question::updateOrCreate(
+                    [
+                        'paper_id' => $paper->id,
+                        'question_text' => $questionText,
+                    ],
+                    [
+                        'topic_tag' => $topicTag ?: null,
+                        'order_index' => \App\Models\Question::where('paper_id', $paper->id)->max('order_index') + 1,
+                    ]
+                );
+
+                if ($question->wasRecentlyCreated) {
+                    $options = [$option1, $option2, $option3, $option4];
+                    foreach ($options as $index => $optText) {
+                        \App\Models\Option::create([
+                            'question_id' => $question->id,
+                            'option_text' => $optText,
+                            'is_correct' => ($correctNum === $index + 1),
+                            'order_index' => $index + 1,
+                        ]);
+                    }
+                    $importedQuestions++;
+                } else {
+                    $existingOpts = $question->options()->orderBy('order_index')->get();
+                    if ($existingOpts->count() === 4) {
+                        $options = [$option1, $option2, $option3, $option4];
+                        foreach ($existingOpts as $index => $optModel) {
+                            $optModel->update([
+                                'option_text' => $options[$index],
+                                'is_correct' => ($correctNum === $index + 1),
+                            ]);
+                        }
+                    }
+                }
+            }
         }
 
         fclose($file);
         $this->reset('importFile');
-        session()->flash('success', "$importedCount papers imported successfully!");
+        session()->flash('success', "Import complete: $importedPapers new papers and $importedQuestions new/updated questions processed.");
         $this->resetPage();
     }
 

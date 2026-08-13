@@ -14,6 +14,8 @@ class PaperCatalog extends Component
     // ── Filters ────────────────────────────────────────
     public string $filterLevel = '';
     public string $filterMedium = '';
+    public string $filterYear = '';
+    public string $filterSubject = '';
 
     #[Computed]
     public function purchasedPaperIds()
@@ -37,7 +39,21 @@ class PaperCatalog extends Component
 
     public function resetFilters()
     {
-        $this->reset(['filterLevel', 'filterMedium']);
+        $this->reset(['filterLevel', 'filterMedium', 'filterYear', 'filterSubject']);
+    }
+
+    #[Computed]
+    public function availableYears()
+    {
+        return Paper::where('is_published', true)->select('year')->distinct()->orderBy('year', 'desc')->pluck('year');
+    }
+
+    #[Computed]
+    public function availableSubjects()
+    {
+        return \App\Models\Subject::whereHas('papers', function($q) {
+            $q->where('is_published', true);
+        })->orderBy('name')->get();
     }
 
     #[Computed]
@@ -54,7 +70,9 @@ class PaperCatalog extends Component
         $filtered = $allPapers->filter(function ($paper) {
             $matchesLevel = $this->filterLevel === '' || $paper->subject->level === $this->filterLevel;
             $matchesMedium = $this->filterMedium === '' || $paper->subject->medium === $this->filterMedium;
-            return $matchesLevel && $matchesMedium;
+            $matchesYear = $this->filterYear === '' || (string) $paper->year === $this->filterYear;
+            $matchesSubject = $this->filterSubject === '' || (string) $paper->subject->id === $this->filterSubject;
+            return $matchesLevel && $matchesMedium && $matchesYear && $matchesSubject;
         });
 
         // 3. Group by level -> subject name

@@ -16,17 +16,6 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <flux:modal.trigger name="import-questions">
-          <button class="text-sm font-medium text-ink/60 hover:text-ink flex items-center gap-1.5 border border-ink/15 rounded-lg px-3 py-1.5 hover:bg-ink/5 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-            Import
-          </button>
-        </flux:modal.trigger>
-        <button wire:click="exportCsv" class="text-sm font-medium text-ink/60 hover:text-ink flex items-center gap-1.5 border border-ink/15 rounded-lg px-3 py-1.5 hover:bg-ink/5 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-          Export
-        </button>
-        <span class="w-px h-5 bg-ink/10 mx-1"></span>
         <a href="{{ route('papers') }}" class="text-sm font-medium text-ink/60 hover:text-ink" target="_blank">Preview catalog &rarr;</a>
         <a href="{{ route('admin.papers') }}" wire:navigate class="inline-flex items-center rounded-lg bg-ink text-paper text-sm font-semibold px-4 py-2 hover:bg-ink/90 transition">Done</a>
       </div>
@@ -188,49 +177,4 @@
     </div>
   @endif
 
-  <!-- IMPORT MODAL USING FLUX -->
-  <flux:modal name="import-questions" class="md:w-full md:max-w-md">
-      <form wire:submit="importCsv">
-          <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
-              <h2 class="font-display text-lg text-ink">Import Questions</h2>
-              <flux:modal.close>
-                <button type="button" class="text-ink/40 hover:text-ink text-xl leading-none">&times;</button>
-              </flux:modal.close>
-          </div>
-          <div class="p-6 space-y-5">
-              @if($successMessage)
-                <div class="rounded-lg bg-teal/10 border border-teal/20 p-4 flex items-start gap-3">
-                  <svg class="w-5 h-5 text-teal shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
-                  <p class="text-sm font-medium text-teal">{{ $successMessage }}</p>
-                </div>
-              @endif
-
-              <div class="text-sm text-ink/70">
-                <p class="mb-3">Upload a CSV file to bulk import questions. Note: Images cannot be imported via CSV; you must add them manually after importing.</p>
-                <button type="button" wire:click="downloadTemplate" class="text-teal font-semibold hover:underline flex items-center gap-1.5">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                  Download CSV Template
-                </button>
-              </div>
-
-              <flux:field>
-                  <flux:label>CSV File</flux:label>
-                  <input type="file" wire:model="importFile" accept=".csv" class="block w-full text-sm text-ink/70 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal/10 file:text-teal hover:file:bg-teal/20" />
-                  <flux:error name="importFile" />
-              </flux:field>
-              
-              <div wire:loading wire:target="importFile" class="text-xs text-teal font-medium">Uploading...</div>
-              <div wire:loading wire:target="importCsv" class="text-xs text-teal font-medium">Processing CSV...</div>
-          </div>
-          
-          <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-ink/10">
-              <flux:modal.close>
-                <button type="button" class="text-sm font-medium text-ink/60 hover:text-ink px-4 py-2">Cancel</button>
-              </flux:modal.close>
-              <button type="submit" class="text-sm font-semibold bg-teal text-paper rounded-lg px-5 py-2.5 hover:bg-teal/90 transition">
-                  Import Questions
-              </button>
-          </div>
-      </form>
-  </flux:modal>
 </div>
