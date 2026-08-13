@@ -122,9 +122,6 @@
       <form wire:submit="savePaper">
           <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
               <h2 class="font-display text-lg text-ink">Add New Paper</h2>
-              <flux:modal.close>
-                <button type="button" class="text-ink/40 hover:text-ink text-xl leading-none">&times;</button>
-              </flux:modal.close>
           </div>
           <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div class="grid grid-cols-3 gap-4">
@@ -215,9 +212,6 @@
       <form wire:submit="updatePaper">
           <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
               <h2 class="font-display text-lg text-ink">Edit Paper Details</h2>
-              <flux:modal.close>
-                <button type="button" class="text-ink/40 hover:text-ink text-xl leading-none">&times;</button>
-              </flux:modal.close>
           </div>
           <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div class="grid grid-cols-3 gap-4">
@@ -303,9 +297,6 @@
       <form wire:submit="importCsv">
           <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
               <h2 class="font-display text-lg text-ink">Import Papers via CSV</h2>
-              <flux:modal.close>
-                <button type="button" class="text-ink/40 hover:text-ink text-xl leading-none">&times;</button>
-              </flux:modal.close>
           </div>
           <div class="p-6 space-y-5">
               @if(session('success'))
