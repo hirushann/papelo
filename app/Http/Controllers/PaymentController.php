@@ -240,6 +240,64 @@ class PaymentController extends Controller
      */
     public function success(Request $request)
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        if ($user) {
+            // Fallback: Manually query Lemon Squeezy API to sync the latest subscription
+            // in case the webhook hasn't arrived or the user is testing on localhost.
+            try {
+                $setting = \App\Models\Setting::where('key', 'lsApiKey')->first();
+                $apiKey = $setting ? $setting->value : config('services.lemonsqueezy.api_key');
+
+                $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
+                    ->get('https://api.lemonsqueezy.com/v1/subscriptions', [
+                        'filter[user_email]' => $user->email,
+                    ]);
+
+                if ($response->successful()) {
+                    $subscriptions = $response->json('data') ?? [];
+                    
+                    if (count($subscriptions) > 0) {
+                        // Sort to get the most recently created one
+                        usort($subscriptions, fn($a, $b) => strtotime($b['attributes']['created_at']) - strtotime($a['attributes']['created_at']));
+                        
+                        $latestSub = $subscriptions[0];
+                        $lsSubscriptionId = (string) $latestSub['id'];
+                        $attributes = $latestSub['attributes'];
+                        // Lemon Squeezy returns custom_data on the subscription object? Wait, no, it usually returns variant_id.
+                        // Let's find plan by variant ID instead if custom_data isn't there.
+                        $variantId = $attributes['variant_id'] ?? null;
+                        
+                        $plan = \App\Models\Plan::where('ls_variant_id', $variantId)->first();
+                        
+                        if ($plan) {
+                            $existing = \App\Models\Subscription::where('ls_subscription_id', $lsSubscriptionId)->first();
+                            
+                            if (!$existing) {
+                                // Cancel existing active subscriptions
+                                \App\Models\Subscription::where('user_id', $user->id)
+                                    ->where('status', 'active')
+                                    ->update(['status' => 'cancelled', 'cancelled_at' => now()]);
+
+                                \App\Models\Subscription::create([
+                                    'user_id' => $user->id,
+                                    'plan_id' => $plan->id,
+                                    'ls_subscription_id' => $lsSubscriptionId,
+                                    'ls_customer_id' => (string) $attributes['customer_id'],
+                                    'status' => $this->mapLsStatus($attributes['status']),
+                                    'current_period_start' => $attributes['renews_at'] ? now() : now(),
+                                    'current_period_end' => $attributes['renews_at'] ?? null,
+                                    'attempts_used' => 0,
+                                ]);
+                            }
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to sync subscription on success route: ' . $e->getMessage());
+            }
+        }
+
         return redirect()->route('dashboard')->with('payment-success', 'Subscription activated! You now have access to all papers in your plan.');
     }
 }

@@ -131,7 +131,9 @@
           <p class="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-3">Quick links</p>
           <div class="space-y-1">
             <a href="{{ route('papers') }}" class="block text-sm text-ink/70 hover:text-teal py-1.5">Browse all past papers &rarr;</a>
+            @if(Auth::user()->hasFeature('full_progress_report'))
             <a href="{{ route('progress') }}" wire:navigate class="block text-sm text-ink/70 hover:text-teal py-1.5">See full progress report &rarr;</a>
+            @endif
             <a href="{{ route('progress') }}" wire:navigate class="block text-sm text-ink/70 hover:text-teal py-1.5">Attempt history &rarr;</a>
           </div>
         </div>

@@ -37,18 +37,18 @@ class PaymentManager extends Component
         };
 
         // Query for stats for the selected time range
-        $baseStatQuery = Subscription::where('created_at', '>=', $dateThreshold);
+        $baseStatQuery = Subscription::where('subscriptions.created_at', '>=', $dateThreshold);
         
-        $revenue = (clone $baseStatQuery)->where('status', 'active')
+        $revenue = (clone $baseStatQuery)->where('subscriptions.status', 'active')
             ->join('plans', 'subscriptions.plan_id', '=', 'plans.id')
             ->sum('plans.price');
-        $activeCount = (clone $baseStatQuery)->where('status', 'active')->count();
-        $cancelledCount = (clone $baseStatQuery)->where('status', 'cancelled')->count();
-        $pastDueCount = (clone $baseStatQuery)->where('status', 'past_due')->count();
+        $activeCount = (clone $baseStatQuery)->where('subscriptions.status', 'active')->count();
+        $cancelledCount = (clone $baseStatQuery)->where('subscriptions.status', 'cancelled')->count();
+        $pastDueCount = (clone $baseStatQuery)->where('subscriptions.status', 'past_due')->count();
 
         // Main table query
         $query = Subscription::with(['user', 'plan'])
-            ->where('created_at', '>=', $dateThreshold);
+            ->where('subscriptions.created_at', '>=', $dateThreshold);
 
         if ($this->search) {
             $query->where(function ($q) {

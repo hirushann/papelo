@@ -111,4 +111,18 @@ class User extends Authenticatable
 
         return !$subscription->hasReachedLimit();
     }
+
+    /**
+     * Check if the user has a specific feature via their active subscription.
+     */
+    public function hasFeature(string $feature): bool
+    {
+        $subscription = $this->activeSubscription();
+
+        if (!$subscription) {
+            return false;
+        }
+
+        return $subscription->hasFeature($feature);
+    }
 }

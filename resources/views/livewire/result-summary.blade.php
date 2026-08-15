@@ -73,7 +73,9 @@
     <div class="bg-white rounded-2xl border border-ink/10 p-6 mb-8">
       <div class="flex items-center justify-between mb-5">
         <h2 class="font-display text-lg text-ink">Topics to revisit</h2>
-        <a href="#" class="text-xs font-semibold text-teal hover:underline">Full breakdown &rarr;</a>
+        @if(Auth::user()->hasFeature('full_progress_report'))
+          <a href="{{ route('progress') }}" class="text-xs font-semibold text-teal hover:underline">Full breakdown &rarr;</a>
+        @endif
       </div>
       <div class="space-y-4">
         @foreach($topicAnalytics as $topic => $data)
@@ -92,6 +94,9 @@
     <!-- ACTIONS -->
     <div class="flex flex-col sm:flex-row gap-3 mt-6">
       <a href="{{ route('result.review', $attempt->id) }}" wire:navigate class="flex-1 text-center rounded-lg bg-teal text-paper font-semibold py-3.5 hover:bg-teal/90 transition">Review my answers</a>
+      @if(Auth::user()->hasFeature('download_report'))
+        <button type="button" onclick="alert('PDF generation coming soon!')" class="flex-1 text-center rounded-lg border-2 border-teal text-teal font-semibold py-3.5 hover:bg-teal hover:text-paper transition">Download PDF Report</button>
+      @endif
       <a href="{{ route('dashboard') }}" class="flex-1 text-center rounded-lg border border-ink/15 text-ink font-semibold py-3.5 hover:border-ink/30 transition">Back to papers</a>
     </div>
   </main>

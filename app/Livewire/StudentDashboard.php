@@ -65,15 +65,17 @@ class StudentDashboard extends Component
             ->take(4)
             ->get();
 
-        // 4. Suggested Next Paper (Fallback logic: latest published paper they haven't taken)
+        // 4. Get a suggested next paper (only if user has the feature)
         $attemptedPaperIds = Attempt::where('user_id', $this->user->id)
             ->pluck('paper_id')
             ->toArray();
-            
-        $this->suggestedPaper = Paper::where('is_published', true)
-            ->whereNotIn('id', $attemptedPaperIds)
-            ->latest()
-            ->first();
+
+        if ($this->user->hasFeature('suggested_paper')) {
+            $this->suggestedPaper = Paper::where('is_published', true)
+                ->whereNotIn('id', $attemptedPaperIds)
+                ->inRandomOrder()
+                ->first();
+        }
     }
 
     public function logout(\App\Livewire\Actions\Logout $logout)

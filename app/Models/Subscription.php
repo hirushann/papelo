@@ -90,4 +90,22 @@ class Subscription extends Model
     {
         $this->increment('attempts_used');
     }
+
+    /**
+     * Check if this subscription includes a specific feature.
+     * Features: 'suggested_paper', 'full_progress_report', 'structured_papers', 'download_report'
+     */
+    public function hasFeature(string $feature): bool
+    {
+        if (!$this->plan) {
+            return false;
+        }
+
+        return match($this->plan->slug) {
+            'pass' => true, // Pass gets everything
+            'progress' => in_array($feature, ['suggested_paper', 'full_progress_report']),
+            'practice' => in_array($feature, []), // Practice only gets the basics (which aren't explicitly gated)
+            default => false,
+        };
+    }
 }

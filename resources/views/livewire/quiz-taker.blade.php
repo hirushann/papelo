@@ -171,17 +171,33 @@
         </div>
       @endif
 
-      <div class="space-y-3">
-        @foreach($currentQuestion->options as $option)
-        @php
-            $isSelected = isset($answers[$currentQuestion->id]) && $answers[$currentQuestion->id] == $option->id;
-        @endphp
-        <div wire:click="selectOption({{ $currentQuestion->id }}, {{ $option->id }})" class="option-row {{ $isSelected ? 'selected' : '' }}">
-          <span class="option-bubble"></span>
-          <span class="{{ $isSelected ? 'text-ink font-medium' : 'text-ink/80' }}">{{ $option->option_text }}</span>
-        </div>
-        @endforeach
-      </div>
+      @if($currentQuestion->type === 'structured')
+          @if(Auth::user()->hasFeature('structured_papers'))
+              <div class="bg-teal/10 text-teal-900 p-5 rounded-xl border border-teal/20 mb-6">
+                <p class="font-semibold mb-2">Structured Question</p>
+                <p class="text-sm">Please write your answer on a piece of paper. The model solution will be provided during the review phase.</p>
+              </div>
+          @else
+              <div class="bg-gold/10 text-gold-900 p-6 rounded-xl border border-gold/30 text-center mb-6">
+                <svg class="w-10 h-10 text-gold mx-auto mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                <h3 class="font-display text-lg text-ink mb-2">Structured Questions Locked</h3>
+                <p class="text-sm text-ink/70 mb-4 max-w-sm mx-auto">This is a structured question. Upgrade to the Pass tier to unlock self-marked structured questions and model solutions.</p>
+                <a href="{{ route('subscribe') }}" class="inline-block bg-gold text-paper font-semibold rounded-lg px-6 py-2.5 hover:bg-gold/90 transition">Upgrade to Pass</a>
+              </div>
+          @endif
+      @else
+          <div class="space-y-3">
+            @foreach($currentQuestion->options as $option)
+            @php
+                $isSelected = isset($answers[$currentQuestion->id]) && $answers[$currentQuestion->id] == $option->id;
+            @endphp
+            <div wire:click="selectOption({{ $currentQuestion->id }}, {{ $option->id }})" class="option-row {{ $isSelected ? 'selected' : '' }}">
+              <span class="option-bubble"></span>
+              <span class="{{ $isSelected ? 'text-ink font-medium' : 'text-ink/80' }}">{{ $option->option_text }}</span>
+            </div>
+            @endforeach
+          </div>
+      @endif
 
       <div class="flex items-center justify-between mt-10 pt-6 border-t border-ink/10">
         <button wire:click="prevQuestion" @if($currentQuestionIndex == 0) disabled @endif class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink/70 border border-ink/15 rounded-lg px-5 py-2.5 hover:border-ink/30 disabled:opacity-50 disabled:cursor-not-allowed">
