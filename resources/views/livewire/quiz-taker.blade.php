@@ -78,8 +78,8 @@
         </div>
         <h2 class="font-display text-2xl text-ink mb-2">Want the full picture?</h2>
         <p class="text-sm text-ink/60 mb-6 max-w-md mx-auto">Purchase the full paper to unlock all {{ $allQuestionsCount }} questions, get timed exam conditions, and see a detailed topic-by-topic breakdown of your weak areas.</p>
-        <a href="{{ route('paper.buy', $paper->id) }}" wire:navigate class="block w-full max-w-sm mx-auto rounded-lg bg-teal text-paper font-semibold py-3.5 hover:bg-teal/90 transition">
-          Buy full paper — Rs. {{ number_format($paper->price, 0) }}
+        <a href="{{ route('subscribe') }}" wire:navigate class="block w-full max-w-sm mx-auto rounded-lg bg-teal text-paper font-semibold py-3.5 hover:bg-teal/90 transition">
+          Subscribe to unlock full paper
         </a>
       </div>
     </main>
@@ -236,7 +236,7 @@
         </div>
 
         @if($isPreview)
-          <a href="{{ route('paper.buy', $paper->id) }}" wire:navigate class="block w-full text-center text-sm font-semibold bg-teal text-paper rounded-lg py-3 hover:bg-teal/90 transition">Buy full paper</a>
+          <a href="{{ route('subscribe') }}" wire:navigate class="block w-full text-center text-sm font-semibold bg-teal text-paper rounded-lg py-3 hover:bg-teal/90 transition">Subscribe to unlock</a>
           <p class="text-[11px] text-ink/40 text-center mt-2">{{ $allQuestionsCount - $previewLimit }} more questions in full paper</p>
         @else
           <button wire:click="submit" class="w-full text-sm font-semibold bg-ink text-paper rounded-lg py-3 hover:bg-ink/90 transition">Submit paper</button>

@@ -123,7 +123,7 @@
           <span class="inline-block text-[11px] font-semibold uppercase text-teal bg-teal/10 rounded-full px-2.5 py-0.5 mb-2">{{ strtoupper($suggestedPaper->level) }}</span>
           <h3 class="font-display text-lg text-ink mb-1">{{ $suggestedPaper->title }}</h3>
           <p class="text-xs text-ink/50 mb-4">A new challenge awaits you based on your recent activity.</p>
-          <a href="{{ route('paper.buy', $suggestedPaper->id) }}" class="block text-center rounded-lg bg-teal text-paper text-sm font-semibold py-2.5 hover:bg-teal/90 transition">Start this paper</a>
+          <a href="{{ route('quiz.take', $suggestedPaper->id) }}" class="block text-center rounded-lg bg-teal text-paper text-sm font-semibold py-2.5 hover:bg-teal/90 transition">Start this paper</a>
         </div>
         @endif
 
