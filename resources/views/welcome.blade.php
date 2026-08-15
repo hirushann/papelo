@@ -23,6 +23,33 @@
         <meta property="twitter:title" content="{{ config('app.name', 'Papelo') }} — Practice past papers. Get instant results.">
         <meta property="twitter:description" content="Papelo is the ultimate online platform for Sri Lankan students to practice past exam papers as interactive MCQs with instant scoring and topic analytics.">
 
+        <!-- Structured Data / SEO -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Papelo",
+          "alternateName": ["Papeloo", "Papelooo"],
+          "url": "{{ config('app.url') }}",
+          "description": "Papelo is the ultimate online platform for Sri Lankan students to practice past exam papers as interactive MCQs with instant scoring and topic analytics."
+        }
+        </script>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Papelo",
+          "alternateName": ["Papeloo", "Papelooo"],
+          "url": "{{ config('app.url') }}",
+          "logo": "{{ asset('images/papelo-icon-tile.svg') }}",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "contact@papelooo.com",
+            "contactType": "customer support"
+          }
+        }
+        </script>
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
