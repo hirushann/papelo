@@ -145,6 +145,6 @@ class ProgressReport extends Component
 
         return view('livewire.progress-report', [
             'history' => $history
-        ])->layout('layouts.quiz')->title('Your Progress — Papelo');
+        ])->layout('layouts.quiz')->title('Your Progress — Papelooo');
     }
 }

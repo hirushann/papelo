@@ -187,14 +187,14 @@ class PaperManager extends Component
             "Expires"             => "0"
         ];
 
-        $columns = ['Subject', 'Level (scholarship, ol, al)', 'Medium (english, sinhala, tamil)', 'Year', 'Title', 'Duration_Minutes', 'Price', 'Status (Draft, Published)'];
+        $columns = ['Subject', 'Level (scholarship, ol, al)', 'Medium (english, sinhala, tamil)', 'Year', 'Title', 'Duration_Minutes', 'Price', 'Status (Draft, Published)', 'Question_Type', 'Question_Text', 'Topic_Tag', 'Instruction', 'Model_Solution', 'Allow_Photo', 'Question_JSON_Data'];
 
         $callback = function() use($columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
             
             // Example row
-            fputcsv($file, ['Science', 'ol', 'english', '2023', 'O/L Science 2023', '60', '500', 'Published']);
+            fputcsv($file, ['Science', 'ol', 'english', '2023', 'O/L Science 2023', '60', '500', 'Published', 'mcq', 'Which planet is closest to the sun?', 'astronomy', '', '', '0', '{"options":[{"id":"1","text":"Mercury","is_correct":true},{"id":"2","text":"Venus","is_correct":false}]}']);
             
             fclose($file);
         };
@@ -204,7 +204,7 @@ class PaperManager extends Component
 
     public function exportCsv()
     {
-        $query = Paper::query()->with(['subject', 'questions.options']);
+        $query = Paper::query()->with(['subject', 'questions']);
         
         if ($this->search) {
             $query->where(function ($q) {
@@ -238,7 +238,7 @@ class PaperManager extends Component
 
         $columns = [
             'Subject_Name', 'Level', 'Medium', 'Year', 'Paper_Title', 'Duration_Minutes', 'Price', 'Status',
-            'Question_Text', 'Topic_Tag', 'Option_1', 'Option_2', 'Option_3', 'Option_4', 'Correct_Option_Number_1_To_4'
+            'Question_Type', 'Question_Text', 'Topic_Tag', 'Instruction', 'Model_Solution', 'Allow_Photo', 'Question_JSON_Data'
         ];
 
         $callback = function() use($papers, $columns) {
@@ -261,22 +261,14 @@ class PaperManager extends Component
                     fputcsv($file, array_merge($paperData, ['', '', '', '', '', '', '']));
                 } else {
                     foreach ($paper->questions->sortBy('order_index') as $question) {
-                        $opts = $question->options->sortBy('order_index')->values();
-                        $correctIndex = 1;
-                        foreach ($opts as $idx => $opt) {
-                            if ($opt->is_correct) {
-                                $correctIndex = $idx + 1;
-                                break;
-                            }
-                        }
                         fputcsv($file, array_merge($paperData, [
-                            $question->question_text,
+                            $question->type ?? 'mcq',
+                            $question->question_text ?? '',
                             $question->topic_tag ?? '',
-                            $opts[0]->option_text ?? '',
-                            $opts[1]->option_text ?? '',
-                            $opts[2]->option_text ?? '',
-                            $opts[3]->option_text ?? '',
-                            $correctIndex
+                            $question->instruction ?? '',
+                            $question->model_solution ?? '',
+                            $question->allow_photo ? '1' : '0',
+                            $question->data ? json_encode($question->data) : ''
                         ]));
                     }
                 }
@@ -313,13 +305,13 @@ class PaperManager extends Component
             $price = trim($row[6]);
             $status = trim($row[7]);
             
-            $questionText = trim($row[8]);
-            $topicTag = trim($row[9]);
-            $option1 = trim($row[10]);
-            $option2 = trim($row[11]);
-            $option3 = trim($row[12]);
-            $option4 = trim($row[13]);
-            $correctNum = (int) trim($row[14]);
+            $questionType = strtolower(trim($row[8]));
+            $questionText = trim($row[9]);
+            $topicTag = trim($row[10]);
+            $instruction = trim($row[11]);
+            $modelSolution = trim($row[12]);
+            $allowPhoto = (bool) trim($row[13]);
+            $jsonDataRaw = trim($row[14]);
 
             if (!$subjectName || !in_array($level, ['scholarship', 'ol', 'al']) || !in_array($medium, ['english', 'sinhala', 'tamil'])) {
                 continue; // Skip invalid row
@@ -359,7 +351,7 @@ class PaperManager extends Component
                 $importedPapers++;
             }
 
-            if ($questionText && $option1 && $option2 && $option3 && $option4 && in_array($correctNum, [1, 2, 3, 4])) {
+            if ($questionText) {
                 
                 $question = \App\Models\Question::updateOrCreate(
                     [
@@ -367,33 +359,18 @@ class PaperManager extends Component
                         'question_text' => $questionText,
                     ],
                     [
+                        'type' => $questionType ?: 'mcq',
                         'topic_tag' => $topicTag ?: null,
+                        'instruction' => $instruction ?: null,
+                        'model_solution' => $modelSolution ?: null,
+                        'allow_photo' => $allowPhoto,
+                        'data' => $jsonDataRaw ? json_decode($jsonDataRaw, true) : null,
                         'order_index' => \App\Models\Question::where('paper_id', $paper->id)->max('order_index') + 1,
                     ]
                 );
 
                 if ($question->wasRecentlyCreated) {
-                    $options = [$option1, $option2, $option3, $option4];
-                    foreach ($options as $index => $optText) {
-                        \App\Models\Option::create([
-                            'question_id' => $question->id,
-                            'option_text' => $optText,
-                            'is_correct' => ($correctNum === $index + 1),
-                            'order_index' => $index + 1,
-                        ]);
-                    }
                     $importedQuestions++;
-                } else {
-                    $existingOpts = $question->options()->orderBy('order_index')->get();
-                    if ($existingOpts->count() === 4) {
-                        $options = [$option1, $option2, $option3, $option4];
-                        foreach ($existingOpts as $index => $optModel) {
-                            $optModel->update([
-                                'option_text' => $options[$index],
-                                'is_correct' => ($correctNum === $index + 1),
-                            ]);
-                        }
-                    }
                 }
             }
         }

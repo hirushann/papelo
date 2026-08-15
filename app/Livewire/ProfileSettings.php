@@ -86,6 +86,6 @@ class ProfileSettings extends Component
             
         return view('livewire.profile-settings', [
             'purchases' => $purchases
-        ])->layout('layouts.quiz')->title('Account Settings — Papelo');
+        ])->layout('layouts.quiz')->title('Account Settings — Papelooo');
     }
 }

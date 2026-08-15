@@ -7,9 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['paper_id', 'question_text', 'image_path', 'topic_tag', 'order_index'])]
+#[Fillable(['paper_id', 'type', 'instruction', 'question_text', 'image_path', 'model_solution', 'allow_photo', 'data', 'topic_tag', 'order_index'])]
 class Question extends Model
 {
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'data' => 'array',
+            'allow_photo' => 'boolean',
+        ];
+    }
     /**
      * Get the paper this question belongs to.
      */

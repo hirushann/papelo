@@ -10,6 +10,7 @@ use Livewire\WithFileUploads;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Storage;
 
 #[Layout('layouts.admin')]
 class QuestionManager extends Component
@@ -19,20 +20,41 @@ class QuestionManager extends Component
     #[Url]
     public $paper_id = '';
 
+    public ?int $editingQuestionId = null;
+    public string $successMessage = '';
+
+    // Core properties
+    public string $type = 'mcq';
     public string $questionText = '';
     public $questionImage = null;
+    public bool $removeImage = false;
     public string $topicTag = '';
-    public array $options = [
-        ['text' => '', 'is_correct' => false],
-        ['text' => '', 'is_correct' => false],
-        ['text' => '', 'is_correct' => false],
-        ['text' => '', 'is_correct' => false],
-    ];
+    public string $instruction = ''; // shared diagram/passage
+    public string $modelSolution = ''; // For short, essay, structured
+    public bool $allowPhoto = false; // For structured
+
+    // MCQ & MCQImg
+    public array $options = [];
     public ?string $correctOption = null;
 
-    public ?int $editingQuestionId = null;
-    public bool $removeImage = false;
-    public string $successMessage = '';
+    // Matching
+    public array $matchPrompts = [];
+    public array $matchChoices = [];
+
+    // Cloze
+    public string $clozeText = '';
+    public array $clozeWords = [];
+    public array $clozeAnswers = []; // blank_index => word
+
+    // Short Answer
+    public array $shortAnswers = [];
+
+    // Essay
+    public string $essayMinWords = '';
+    public string $essayMaxWords = '';
+
+    // Structured
+    public array $structuredCriteria = [];
 
     public function mount()
     {
@@ -44,10 +66,11 @@ class QuestionManager extends Component
             return redirect()->route('admin.papers');
         }
         
-        // Select first question automatically if exists
         $firstQuestion = $this->questions->first();
         if ($firstQuestion) {
             $this->editQuestion($firstQuestion->id);
+        } else {
+            $this->showAddForm();
         }
     }
 
@@ -84,25 +107,84 @@ class QuestionManager extends Component
             ->get();
     }
 
+    // Dynamic UI helpers
+    public function addOption()
+    {
+        $this->options[] = ['text' => '', 'is_correct' => false];
+    }
+    public function removeOption($index)
+    {
+        unset($this->options[$index]);
+        $this->options = array_values($this->options);
+    }
+    public function addMatchPrompt()
+    {
+        $this->matchPrompts[] = ['text' => ''];
+    }
+    public function removeMatchPrompt($index)
+    {
+        unset($this->matchPrompts[$index]);
+        $this->matchPrompts = array_values($this->matchPrompts);
+    }
+    public function addMatchChoice()
+    {
+        $this->matchChoices[] = ['text' => '', 'match_index' => null];
+    }
+    public function removeMatchChoice($index)
+    {
+        unset($this->matchChoices[$index]);
+        $this->matchChoices = array_values($this->matchChoices);
+    }
+    public function addClozeWord()
+    {
+        $this->clozeWords[] = '';
+    }
+    public function removeClozeWord($index)
+    {
+        unset($this->clozeWords[$index]);
+        $this->clozeWords = array_values($this->clozeWords);
+    }
+    public function addShortAnswer()
+    {
+        $this->shortAnswers[] = '';
+    }
+    public function removeShortAnswer($index)
+    {
+        unset($this->shortAnswers[$index]);
+        $this->shortAnswers = array_values($this->shortAnswers);
+    }
+    public function addStructuredCriterion()
+    {
+        $this->structuredCriteria[] = ['text' => '', 'marks' => 1];
+    }
+    public function removeStructuredCriterion($index)
+    {
+        unset($this->structuredCriteria[$index]);
+        $this->structuredCriteria = array_values($this->structuredCriteria);
+    }
+    public function insertClozeBlank()
+    {
+        $count = count($this->clozeAnswers) + 1;
+        $this->clozeText .= " [blank_{$count}] ";
+        $this->clozeAnswers[$count] = '';
+    }
+
+
     public function saveQuestion(bool $addNext = false): void
     {
+        // Basic validation
         $this->validate([
-            'questionText' => 'required|string',
+            'type' => 'required|in:mcq,mcqimg,match,cloze,short,essay,structured',
+            'questionText' => 'required_unless:type,match|string',
             'questionImage' => 'nullable|image|max:2048',
             'topicTag' => 'nullable|string|max:100',
-            'options.0.text' => 'required|string|max:1000',
-            'options.1.text' => 'required|string|max:1000',
-            'options.2.text' => 'required|string|max:1000',
-            'options.3.text' => 'required|string|max:1000',
-            'correctOption' => 'required|in:0,1,2,3',
         ], [
-            'questionText.required' => 'The question text is required.',
-            'options.0.text.required' => 'Option 1 is required.',
-            'options.1.text.required' => 'Option 2 is required.',
-            'options.2.text.required' => 'Option 3 is required.',
-            'options.3.text.required' => 'Option 4 is required.',
-            'correctOption.required' => 'You must select which option is the correct answer.',
+            'questionText.required_unless' => 'The question text is required.',
         ]);
+
+        if (in_array($this->type, ['mcq', 'mcqimg'])) {
+            $this->validate(['correctOption' => 'required'], ['correctOption.required' => 'You must select a correct option.']);
+        }
 
         // Handle image upload
         $imagePath = null;
@@ -114,52 +196,70 @@ class QuestionManager extends Component
             ? Question::find($this->editingQuestionId)->order_index
             : ($this->questions->max('order_index') ?? 0) + 1;
 
+        $data = [];
+        if ($this->type === 'match') {
+            $data['prompts'] = $this->matchPrompts;
+            $data['choices'] = $this->matchChoices;
+        } elseif ($this->type === 'cloze') {
+            $data['text'] = $this->clozeText;
+            $data['words'] = array_filter($this->clozeWords);
+            $data['answers'] = $this->clozeAnswers;
+        } elseif ($this->type === 'short') {
+            $data['answers'] = array_filter($this->shortAnswers);
+        } elseif ($this->type === 'essay') {
+            $data['min_words'] = $this->essayMinWords;
+            $data['max_words'] = $this->essayMaxWords;
+        } elseif ($this->type === 'structured') {
+            $data['criteria'] = $this->structuredCriteria;
+        }
+
         if ($this->editingQuestionId) {
-            // Update existing question
             $question = Question::find($this->editingQuestionId);
-            
-            // Handle image removal or replacement
             $finalImagePath = $question->image_path;
             if ($this->removeImage) {
-                if ($finalImagePath) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($finalImagePath);
-                }
+                if ($finalImagePath) Storage::disk('public')->delete($finalImagePath);
                 $finalImagePath = null;
             } elseif ($imagePath) {
-                if ($finalImagePath) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($finalImagePath);
-                }
+                if ($finalImagePath) Storage::disk('public')->delete($finalImagePath);
                 $finalImagePath = $imagePath;
             }
 
             $question->update([
+                'type' => $this->type,
                 'question_text' => $this->questionText,
                 'image_path' => $finalImagePath,
                 'topic_tag' => $this->topicTag ?: null,
                 'order_index' => $nextOrder,
+                'instruction' => $this->instruction ?: null,
+                'model_solution' => $this->modelSolution ?: null,
+                'allow_photo' => $this->allowPhoto,
+                'data' => $data,
             ]);
-
-            // Delete existing options and recreate
             $question->options()->delete();
         } else {
-            // Create new question
             $question = Question::create([
                 'paper_id' => $this->paper_id,
+                'type' => $this->type,
                 'question_text' => $this->questionText,
                 'image_path' => $imagePath,
                 'topic_tag' => $this->topicTag ?: null,
                 'order_index' => $nextOrder,
+                'instruction' => $this->instruction ?: null,
+                'model_solution' => $this->modelSolution ?: null,
+                'allow_photo' => $this->allowPhoto,
+                'data' => $data,
             ]);
         }
 
-        // Create options
-        foreach ($this->options as $index => $option) {
-            Option::create([
-                'question_id' => $question->id,
-                'option_text' => $option['text'],
-                'is_correct' => (int) $this->correctOption === $index,
-                'order_index' => $index + 1,
-            ]);
+        if (in_array($this->type, ['mcq', 'mcqimg'])) {
+            foreach ($this->options as $index => $option) {
+                Option::create([
+                    'question_id' => $question->id,
+                    'option_text' => $option['text'],
+                    'is_correct' => (string) $this->correctOption === (string) $index,
+                    'order_index' => $index + 1,
+                ]);
+            }
         }
 
         $this->successMessage = $this->editingQuestionId
@@ -171,9 +271,7 @@ class QuestionManager extends Component
         if ($addNext) {
             $this->showAddForm();
         } else {
-            // Stay on the same edited question, just refresh UI
             $this->editQuestion($question->id);
-            // Hide success message after a bit could be done in alpine, for now just let it show
         }
     }
 
@@ -182,43 +280,54 @@ class QuestionManager extends Component
         $question = Question::with('options')->find($questionId);
         if (!$question || $question->paper_id != $this->paper_id) return;
 
+        $this->showAddForm(); // reset all
+        
         $this->editingQuestionId = $question->id;
+        $this->type = $question->type ?? 'mcq';
         $this->questionText = $question->question_text;
         $this->topicTag = $question->topic_tag ?? '';
-        $this->questionImage = null;
-        $this->removeImage = false;
-        $this->successMessage = '';
+        $this->instruction = $question->instruction ?? '';
+        $this->modelSolution = $question->model_solution ?? '';
+        $this->allowPhoto = $question->allow_photo;
+        $data = $question->data ?? [];
 
-        $this->options = [];
-        $this->correctOption = null;
-
-        foreach ($question->options->sortBy('order_index')->values() as $index => $option) {
-            $this->options[$index] = [
-                'text' => $option->option_text,
-                'is_correct' => $option->is_correct,
-            ];
-            if ($option->is_correct) {
-                $this->correctOption = (string) $index;
+        if (in_array($this->type, ['mcq', 'mcqimg'])) {
+            $this->options = [];
+            foreach ($question->options->sortBy('order_index')->values() as $index => $option) {
+                $this->options[$index] = [
+                    'text' => $option->option_text,
+                    'is_correct' => $option->is_correct,
+                ];
+                if ($option->is_correct) {
+                    $this->correctOption = (string) $index;
+                }
             }
-        }
-
-        // Ensure we always have 4 options
-        while (count($this->options) < 4) {
-            $this->options[] = ['text' => '', 'is_correct' => false];
+            while (count($this->options) < 4) {
+                $this->options[] = ['text' => '', 'is_correct' => false];
+            }
+        } elseif ($this->type === 'match') {
+            $this->matchPrompts = $data['prompts'] ?? [['text' => '']];
+            $this->matchChoices = $data['choices'] ?? [['text' => '', 'match_index' => null]];
+        } elseif ($this->type === 'cloze') {
+            $this->clozeText = $data['text'] ?? '';
+            $this->clozeWords = $data['words'] ?? [];
+            $this->clozeAnswers = $data['answers'] ?? [];
+        } elseif ($this->type === 'short') {
+            $this->shortAnswers = $data['answers'] ?? [''];
+        } elseif ($this->type === 'essay') {
+            $this->essayMinWords = $data['min_words'] ?? '';
+            $this->essayMaxWords = $data['max_words'] ?? '';
+        } elseif ($this->type === 'structured') {
+            $this->structuredCriteria = $data['criteria'] ?? [['text' => '', 'marks' => 1]];
         }
     }
 
     public function deleteQuestion(): void
     {
         if (!$this->editingQuestionId) return;
-        
         Question::find($this->editingQuestionId)?->delete();
 
-        // Reorder remaining questions
-        $remainingQuestions = Question::where('paper_id', $this->paper_id)
-            ->orderBy('order_index')
-            ->get();
-
+        $remainingQuestions = Question::where('paper_id', $this->paper_id)->orderBy('order_index')->get();
         foreach ($remainingQuestions as $index => $q) {
             $q->update(['order_index' => $index + 1]);
         }
@@ -237,21 +346,37 @@ class QuestionManager extends Component
     public function showAddForm(): void
     {
         $this->editingQuestionId = null;
+        $this->type = 'mcq';
         $this->questionText = '';
         $this->questionImage = null;
         $this->removeImage = false;
         $this->topicTag = '';
+        $this->instruction = '';
+        $this->modelSolution = '';
+        $this->allowPhoto = false;
         $this->correctOption = null;
+        
         $this->options = [
             ['text' => '', 'is_correct' => false],
             ['text' => '', 'is_correct' => false],
             ['text' => '', 'is_correct' => false],
             ['text' => '', 'is_correct' => false],
         ];
+        $this->matchPrompts = [['text' => '']];
+        $this->matchChoices = [['text' => '', 'match_index' => null]];
+        
+        $this->clozeText = '';
+        $this->clozeWords = [];
+        $this->clozeAnswers = [];
+        
+        $this->shortAnswers = [''];
+        $this->essayMinWords = '';
+        $this->essayMaxWords = '';
+        $this->structuredCriteria = [['text' => '', 'marks' => 1]];
+
         $this->successMessage = '';
         $this->resetValidation();
     }
-
 
     public function render()
     {

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 Route::view('/about', 'about')->name('about');
+Route::view('/pricing', 'pricing')->name('pricing');
 Route::view('/contact', 'contact')->name('contact');
 Route::view('/terms', 'terms')->name('terms');
 Route::view('/privacy-policy', 'privacy')->name('privacy');
@@ -11,11 +12,10 @@ Route::view('/refund-policy', 'refund')->name('refund');
 
 Route::get('/dashboard', \App\Livewire\StudentDashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/progress', \App\Livewire\ProgressReport::class)->middleware(['auth', 'verified'])->name('progress');
-Route::get('/paper/{paper}/buy', \App\Livewire\PaperCheckout::class)->middleware(['auth'])->name('paper.buy');
+Route::get('/subscribe', \App\Livewire\SubscriptionCheckout::class)->middleware(['auth'])->name('subscribe');
+Route::get('/subscribe/success', [\App\Http\Controllers\PaymentController::class, 'success'])->name('subscribe.success');
 
-Route::post('/payhere/notify', [\App\Http\Controllers\PaymentController::class, 'notify'])->name('payhere.notify');
-Route::get('/payhere/return', [\App\Http\Controllers\PaymentController::class, 'returnHandler'])->name('payhere.return');
-Route::get('/payhere/cancel', [\App\Http\Controllers\PaymentController::class, 'cancelHandler'])->name('payhere.cancel');
+Route::post('/webhooks/lemonsqueezy', [\App\Http\Controllers\PaymentController::class, 'webhook'])->name('webhooks.lemonsqueezy');
 
 Route::get('/profile', \App\Livewire\ProfileSettings::class)
     ->middleware(['auth'])
@@ -64,7 +64,7 @@ Route::get('admin/papers', \App\Livewire\Admin\PaperManager::class)
 Route::get('papers', \App\Livewire\PaperCatalog::class)
     ->name('papers');
 
-// Placeholder routes for future prompts (QuizTaker, PayHere)
+// Quiz and Result routes
 Route::get('quiz/{paper}', \App\Livewire\QuizTaker::class)
     ->middleware(['auth'])
     ->name('quiz.take');

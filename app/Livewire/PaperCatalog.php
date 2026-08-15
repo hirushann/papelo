@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Paper;
-use App\Models\Purchase;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -17,24 +16,22 @@ class PaperCatalog extends Component
     public string $filterYear = '';
     public string $filterSubject = '';
 
-    #[Computed]
-    public function purchasedPaperIds()
-    {
-        if (!Auth::check()) {
-            return collect();
-        }
-
-        return Purchase::where('status', 'completed')
-            ->where('user_id', Auth::id())
-            ->pluck('paper_id');
-    }
-
-    public function isPurchased(Paper $paper): bool
+    /**
+     * Check if the current user has access to a paper.
+     * Free papers are always accessible.
+     * Paid papers require an active subscription.
+     */
+    public function hasAccess(Paper $paper): bool
     {
         if ((float) $paper->price === 0.00) {
             return true;
         }
-        return $this->purchasedPaperIds()->contains($paper->id);
+
+        if (!Auth::check()) {
+            return false;
+        }
+
+        return Auth::user()->hasAccess();
     }
 
     public function resetFilters()
@@ -121,6 +118,6 @@ class PaperCatalog extends Component
     {
         return view('livewire.paper-catalog')
             ->layout('layouts.quiz')
-            ->title('Past Papers — Papelo');
+            ->title('Past Papers — Papelooo');
     }
 }

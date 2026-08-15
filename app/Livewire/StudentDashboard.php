@@ -19,6 +19,7 @@ class StudentDashboard extends Component
         'papers_this_week' => 0,
     ];
     public $suggestedPaper = null;
+    public $activeSubscription = null;
 
     public function mount()
     {
@@ -32,6 +33,9 @@ class StudentDashboard extends Component
         if ($this->user->is_admin) {
             return redirect()->route('admin.dashboard');
         }
+
+        // Load active subscription
+        $this->activeSubscription = $this->user->activeSubscription();
 
         // 2. Check for incomplete attempt
         $this->incompleteAttempt = Attempt::with('paper')

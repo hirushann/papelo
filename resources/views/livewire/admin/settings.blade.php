@@ -92,32 +92,27 @@
 
       <!-- PAYMENT -->
       <section id="payment" class="settings-card p-6 scroll-mt-24">
-        <h2 class="font-display text-lg text-ink mb-1">Payment — PayHere</h2>
-        <p class="text-xs text-ink/50 mb-6">Credentials from your PayHere merchant dashboard.</p>
+        <h2 class="font-display text-lg text-ink mb-1">Payment — Lemon Squeezy</h2>
+        <p class="text-xs text-ink/50 mb-6">Credentials from your Lemon Squeezy dashboard.</p>
         <div class="space-y-4">
-          <div class="flex items-center justify-between rounded-lg bg-paper/60 border border-ink/10 px-4 py-3 mb-2">
-            <div>
-              <p class="text-sm font-semibold text-ink">Mode</p>
-              <p class="text-xs text-ink/50">Sandbox uses PayHere's test environment — no real charges</p>
-            </div>
-            <select wire:model="payhereMode" class="text-sm border border-ink/15 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal">
-              <option>Sandbox</option>
-              <option>Live</option>
-            </select>
+          <div class="field">
+            <label>API Key</label>
+            <input type="password" wire:model="lsApiKey" class="w-full border border-ink/15 rounded-lg py-[0.65rem] px-[0.9rem] text-[0.9rem] text-ink bg-white transition-colors focus:outline-none focus:border-teal focus:ring-[3px] focus:ring-teal/15 shadow-sm">
+            <p class="hint">Found in Settings → API in your Lemon Squeezy dashboard.</p>
           </div>
           <div class="field">
-            <label>Merchant ID</label>
-            <input type="text" wire:model="merchantId" class="w-full border border-ink/15 rounded-lg py-[0.65rem] px-[0.9rem] text-[0.9rem] text-ink bg-white transition-colors focus:outline-none focus:border-teal focus:ring-[3px] focus:ring-teal/15 shadow-sm">
+            <label>Signing Secret</label>
+            <input type="password" wire:model="lsSigningSecret" class="w-full border border-ink/15 rounded-lg py-[0.65rem] px-[0.9rem] text-[0.9rem] text-ink bg-white transition-colors focus:outline-none focus:border-teal focus:ring-[3px] focus:ring-teal/15 shadow-sm">
+            <p class="hint">Found in Settings → Webhooks in your Lemon Squeezy dashboard.</p>
           </div>
           <div class="field">
-            <label>Merchant secret</label>
-            <input type="password" wire:model="merchantSecret" class="w-full border border-ink/15 rounded-lg py-[0.65rem] px-[0.9rem] text-[0.9rem] text-ink bg-white transition-colors focus:outline-none focus:border-teal focus:ring-[3px] focus:ring-teal/15 shadow-sm">
-            <p class="hint">Never shown in full after saving. Re-enter to change it.</p>
+            <label>Store ID</label>
+            <input type="text" wire:model="lsStoreId" class="w-full border border-ink/15 rounded-lg py-[0.65rem] px-[0.9rem] text-[0.9rem] text-ink bg-white transition-colors focus:outline-none focus:border-teal focus:ring-[3px] focus:ring-teal/15 shadow-sm">
           </div>
           <div class="field">
-            <label>Webhook / notify URL</label>
-            <input type="text" value="https://papelo.lk/api/payhere/notify" readonly class="bg-paper/40 text-ink/50 focus:ring-0 cursor-default">
-            <p class="hint">Set this exact URL in your PayHere merchant dashboard.</p>
+            <label>Webhook URL</label>
+            <input type="text" value="{{ url('/webhooks/lemonsqueezy') }}" readonly class="bg-paper/40 text-ink/50 focus:ring-0 cursor-default">
+            <p class="hint">Set this exact URL in your Lemon Squeezy webhook settings.</p>
           </div>
         </div>
       </section>

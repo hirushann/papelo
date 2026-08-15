@@ -13,7 +13,7 @@
   <x-slot name="customHeader">
     <header class="h-16 bg-white border-b border-ink/10 flex items-center justify-between px-8 flex-shrink-0 no-print">
       <div>
-        <p class="text-[11px] text-ink/40"><a href="{{ route('admin.payments') }}" wire:navigate class="hover:text-teal">Payments</a> / {{ $purchase->payhere_order_id ?? 'N/A' }}</p>
+        <p class="text-[11px] text-ink/40"><a href="{{ route('admin.payments') }}" wire:navigate class="hover:text-teal">Payments</a> / {{ $purchase->ls_subscription_id ?? 'N/A' }}</p>
         <h1 class="font-display text-lg text-ink -mt-0.5">Transaction Detail</h1>
       </div>
       <div class="flex items-center gap-3">
@@ -34,7 +34,7 @@
             <span class="font-display text-lg text-ink">Papelo</span>
           </div>
           <p class="text-xs text-ink/50">Papelo (Pvt) Ltd, Negombo, Sri Lanka</p>
-          <p class="text-xs text-ink/50">support@papelo.lk</p>
+          <p class="text-xs text-ink/50">contact@papelooo.com</p>
         </div>
         <div class="text-right">
           <h2 class="font-display text-xl text-ink mb-1">Receipt</h2>
@@ -56,7 +56,7 @@
         </div>
         <div class="text-right">
           <p class="text-xs font-semibold text-ink/40 uppercase mb-1">Receipt details</p>
-          <p class="text-ink/70">Transaction {{ $purchase->payhere_order_id ?? 'N/A' }}</p>
+          <p class="text-ink/70">Subscription {{ $purchase->ls_subscription_id ?? 'N/A' }}</p>
           <p class="text-ink/70">{{ $purchase->created_at->format('M j, Y, g:i A') }}</p>
         </div>
       </div>
@@ -86,7 +86,7 @@
       <div class="bg-white rounded-2xl border border-ink/10 p-5">
         <h3 class="text-sm font-semibold text-ink mb-3">Gateway details</h3>
         <div>
-          <div class="meta-row"><span class="text-ink/50">Order ID</span><span class="font-mono text-ink/70">{{ $purchase->payhere_order_id ?? 'N/A' }}</span></div>
+          <div class="meta-row"><span class="text-ink/50">Subscription ID</span><span class="font-mono text-ink/70">{{ $purchase->ls_subscription_id ?? 'N/A' }}</span></div>
           <div class="meta-row"><span class="text-ink/50">Status</span><span class="font-mono text-ink/70">{{ ucfirst($purchase->status) }}</span></div>
           <div class="meta-row"><span class="text-ink/50">Mode</span><span class="text-ink/70">Live</span></div>
           <div class="meta-row"><span class="text-ink/50">IP address</span><span class="font-mono text-ink/70">112.135.42.7</span></div>

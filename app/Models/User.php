@@ -54,11 +54,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user's purchases.
+     * Get the user's purchases (historical).
      */
     public function purchases(): HasMany
     {
         return $this->hasMany(Purchase::class);
+    }
+
+    /**
+     * Get the user's subscriptions.
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
     }
 
     /**
@@ -67,5 +75,40 @@ class User extends Authenticatable
     public function attempts(): HasMany
     {
         return $this->hasMany(Attempt::class);
+    }
+
+    /**
+     * Get the user's current active subscription (if any).
+     */
+    public function activeSubscription(): ?Subscription
+    {
+        return $this->subscriptions()
+            ->with('plan')
+            ->active()
+            ->latest()
+            ->first();
+    }
+
+    /**
+     * Check if the user has access to papers (active subscription exists).
+     */
+    public function hasAccess(): bool
+    {
+        return $this->activeSubscription() !== null;
+    }
+
+    /**
+     * Check if the user can start a new paper attempt.
+     * Returns false if on Practice tier and paper limit reached.
+     */
+    public function canStartPaper(): bool
+    {
+        $subscription = $this->activeSubscription();
+
+        if (!$subscription) {
+            return false;
+        }
+
+        return !$subscription->hasReachedLimit();
     }
 }

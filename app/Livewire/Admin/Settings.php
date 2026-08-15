@@ -12,15 +12,15 @@ use Livewire\Attributes\Computed;
 class Settings extends Component
 {
     // General
-    public string $platformName = 'Papelo';
-    public string $supportEmail = 'support@papelo.lk';
+    public string $platformName = 'Papelooo';
+    public string $supportEmail = 'contact@papelooo.com';
     public string $timezone = 'Asia/Colombo (GMT+5:30)';
     public string $currency = 'LKR — Sri Lankan Rupee';
 
-    // Payment
-    public string $payhereMode = 'Sandbox';
-    public string $merchantId = '1221XXXX';
-    public string $merchantSecret = '••••••••••••••••';
+    // Payment — Lemon Squeezy
+    public string $lsApiKey = '';
+    public string $lsSigningSecret = '';
+    public string $lsStoreId = '';
     
     // Pricing Defaults
     public int $defaultPrice = 100;
@@ -55,10 +55,10 @@ class Settings extends Component
         $this->timezone = $settings['timezone'] ?? $this->timezone;
         $this->currency = $settings['currency'] ?? $this->currency;
 
-        // Payment
-        $this->payhereMode = $settings['payhereMode'] ?? $this->payhereMode;
-        $this->merchantId = $settings['merchantId'] ?? $this->merchantId;
-        $this->merchantSecret = $settings['merchantSecret'] ?? $this->merchantSecret;
+        // Payment — Lemon Squeezy
+        $this->lsApiKey = $settings['lsApiKey'] ?? $this->lsApiKey;
+        $this->lsSigningSecret = $settings['lsSigningSecret'] ?? $this->lsSigningSecret;
+        $this->lsStoreId = $settings['lsStoreId'] ?? $this->lsStoreId;
 
         // Pricing Defaults
         $this->defaultPrice = $settings['defaultPrice'] ?? $this->defaultPrice;
@@ -76,7 +76,7 @@ class Settings extends Component
     {
         $keys = [
             'platformName', 'supportEmail', 'timezone', 'currency',
-            'payhereMode', 'merchantId', 'merchantSecret',
+            'lsApiKey', 'lsSigningSecret', 'lsStoreId',
             'defaultPrice', 'defaultSubscription',
             'notifyNewStudent', 'notifyFailedPayment', 'notifyNewPaper', 'notifyWeeklySummary'
         ];

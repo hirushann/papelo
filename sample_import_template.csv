@@ -1,0 +1,4 @@
+Subject, Level (scholarship, ol, al), Medium (english, sinhala, tamil), Year, Title, Duration_Minutes, Price, Status (Draft, Published), Question_Type, Question_Text, Topic_Tag, Instruction, Model_Solution, Allow_Photo, Question_JSON_Data
+Science,ol,english,2023,O/L Science 2023,120,500,Published,mcq,Which planet is closest to the sun?,astronomy,,,0,"{""options"":[{""id"":""1"",""text"":""Mercury"",""is_correct"":true},{""id"":""2"",""text"":""Venus"",""is_correct"":false}]}"
+Science,ol,english,2023,O/L Science 2023,120,500,Published,true_false,Water boils at 100 degrees Celsius at sea level.,physics,,,0,"{""is_true"":true}"
+Science,ol,english,2023,O/L Science 2023,120,500,Published,essay,Describe the process of photosynthesis.,biology,,Photosynthesis is the process by which green plants...,1,"{}"

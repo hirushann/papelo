@@ -114,7 +114,7 @@
             @foreach($recentPurchases as $purchase)
             <tr>
               <td class="px-6 py-3.5 text-ink/50 font-mono text-xs">
-                  <a href="{{ route('admin.payments.show', $purchase->id) }}" wire:navigate class="hover:text-teal hover:underline">{{ $purchase->payhere_order_id ?? 'N/A' }}</a>
+                  <a href="{{ route('admin.payments.show', $purchase->id) }}" wire:navigate class="hover:text-teal hover:underline">{{ $purchase->ls_subscription_id ?? 'N/A' }}</a>
               </td>
               <td class="px-6 py-3.5 text-ink/70">{{ $purchase->paper->title ?? 'Paper Purchase' }}</td>
               <td class="px-6 py-3.5 font-medium text-ink">Rs. {{ number_format($purchase->amount_paid, 0) }}</td>

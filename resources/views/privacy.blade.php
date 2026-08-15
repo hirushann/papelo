@@ -40,7 +40,7 @@
                 <p>We reserve the right to update or modify this Privacy Policy at any time. Any changes will be posted on this page with a revised "last updated" date. We encourage you to review this Privacy Policy periodically to stay informed about how we collect, use, and protect your information.</p>
 
                 <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Contact Us</h2>
-                <p>If you have any questions, concerns, or requests regarding our Privacy Policy or the handling of your personal information, please contact us at support@papelo.lk.</p>
+                <p>If you have any questions, concerns, or requests regarding our Privacy Policy or the handling of your personal information, please contact us at contact@papelooo.com.</p>
             </div>
         </div>
     </div>

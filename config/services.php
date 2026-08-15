@@ -35,10 +35,10 @@ return [
         ],
     ],
 
-    'payhere' => [
-        'merchant_id' => env('PAYHERE_MERCHANT_ID'),
-        'merchant_secret' => env('PAYHERE_MERCHANT_SECRET'),
-        'sandbox' => env('PAYHERE_SANDBOX', true),
+    'lemonsqueezy' => [
+        'api_key' => env('LEMON_SQUEEZY_API_KEY'),
+        'store_id' => env('LEMON_SQUEEZY_STORE_ID'),
+        'signing_secret' => env('LEMON_SQUEEZY_SIGNING_SECRET'),
     ],
 
 ];

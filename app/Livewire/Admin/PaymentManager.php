@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Purchase;
+use App\Models\Subscription;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
@@ -37,21 +37,22 @@ class PaymentManager extends Component
         };
 
         // Query for stats for the selected time range
-        $baseStatQuery = Purchase::where('created_at', '>=', $dateThreshold);
+        $baseStatQuery = Subscription::where('created_at', '>=', $dateThreshold);
         
-        $revenue = (clone $baseStatQuery)->where('status', 'completed')->sum('amount_paid');
-        $successfulCount = (clone $baseStatQuery)->where('status', 'completed')->count();
-        $failedCount = (clone $baseStatQuery)->where('status', 'failed')->count();
-        $refundedCount = 0; // Mocked as we don't have this status
-        $refundedAmount = 0; // Mocked
+        $revenue = (clone $baseStatQuery)->where('status', 'active')
+            ->join('plans', 'subscriptions.plan_id', '=', 'plans.id')
+            ->sum('plans.price');
+        $activeCount = (clone $baseStatQuery)->where('status', 'active')->count();
+        $cancelledCount = (clone $baseStatQuery)->where('status', 'cancelled')->count();
+        $pastDueCount = (clone $baseStatQuery)->where('status', 'past_due')->count();
 
         // Main table query
-        $query = Purchase::with(['user', 'paper'])
+        $query = Subscription::with(['user', 'plan'])
             ->where('created_at', '>=', $dateThreshold);
 
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('payhere_order_id', 'like', '%' . $this->search . '%')
+                $q->where('ls_subscription_id', 'like', '%' . $this->search . '%')
                   ->orWhereHas('user', function ($uq) {
                       $uq->where('name', 'like', '%' . $this->search . '%')
                          ->orWhere('email', 'like', '%' . $this->search . '%');
@@ -60,22 +61,17 @@ class PaymentManager extends Component
         }
 
         if ($this->statusFilter) {
-            if ($this->statusFilter === 'refunded') {
-                // Mock: return empty or something, as we don't have refunded
-                $query->where('status', 'refunded'); 
-            } else {
-                $query->where('status', $this->statusFilter);
-            }
+            $query->where('status', $this->statusFilter);
         }
 
-        $purchases = $query->latest()->paginate(15);
+        $subscriptions = $query->latest()->paginate(15);
 
         return view('livewire.admin.payment-manager', [
-            'purchases' => $purchases,
+            'subscriptions' => $subscriptions,
             'revenue' => $revenue,
-            'successfulCount' => $successfulCount,
-            'failedCount' => $failedCount,
-            'refundedAmount' => $refundedAmount,
+            'activeCount' => $activeCount,
+            'cancelledCount' => $cancelledCount,
+            'pastDueCount' => $pastDueCount,
         ]);
     }
 }

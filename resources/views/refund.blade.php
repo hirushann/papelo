@@ -33,7 +33,7 @@
                 <p>Refunds and exchanges will be processed within 7 business days after we receive your returned item. Please note that it may take additional time for the refund to appear in your account, depending on your payment provider.</p>
 
                 <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Contact Us</h2>
-                <p>If you have any questions or concerns regarding our refund policy, please contact our customer support team at support@papelo.lk. We are here to assist you and ensure your shopping experience with us is enjoyable and hassle-free.</p>
+                <p>If you have any questions or concerns regarding our refund policy, please contact our customer support team at contact@papelooo.com. We are here to assist you and ensure your shopping experience with us is enjoyable and hassle-free.</p>
             </div>
         </div>
     </div>

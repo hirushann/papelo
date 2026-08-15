@@ -58,6 +58,23 @@ class QuizTaker extends Component
             return;
         }
 
+        // Full mode: subscription required
+        $user = Auth::user();
+
+        if (!$user || !$user->hasAccess()) {
+            session()->flash('error', 'You need an active subscription to take full papers.');
+            $this->redirect(route('subscribe'), navigate: true);
+            return;
+        }
+
+        // Check paper limit for Practice tier
+        $subscription = $user->activeSubscription();
+        if ($subscription && $subscription->hasReachedLimit()) {
+            session()->flash('error', 'You\'ve reached your paper limit for this month. Upgrade to Progress or Pass for unlimited papers.');
+            $this->redirect(route('subscribe'), navigate: true);
+            return;
+        }
+
         // Full mode: all questions
         $this->questions = $allQuestions;
 
@@ -81,6 +98,11 @@ class QuizTaker extends Component
                 'started_at' => now(),
                 'total_questions' => $this->questions->count(),
             ]);
+
+            // Increment subscription attempts counter for new attempts
+            if ($subscription) {
+                $subscription->incrementAttempts();
+            }
         }
     }
 
@@ -214,6 +236,6 @@ class QuizTaker extends Component
 
     public function render()
     {
-        return view('livewire.quiz-taker')->title($this->paper->title . ' — Papelo');
+        return view('livewire.quiz-taker')->title($this->paper->title . ' — Papelooo');
     }
 }
