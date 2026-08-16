@@ -3,7 +3,7 @@
         <div class="bg-white rounded-2xl border border-ink/10 shadow-xl shadow-ink/5 p-8">
             <h1 class="font-display text-3xl text-ink mb-6">Privacy Policy</h1>
             <div class="prose prose-sm prose-slate text-ink/70">
-                <p>At Papelo, we are committed to protecting the privacy and security of our customers' personal information. This Privacy Policy outlines how we collect, use, and safeguard your information when you visit or make a purchase on our website. By using our website, you consent to the practices described in this policy.</p>
+                <p>At Papelooo, we are committed to protecting the privacy and security of our customers' personal information. This Privacy Policy outlines how we collect, use, and safeguard your information when you visit or make a purchase on our website. By using our website, you consent to the practices described in this policy.</p>
 
                 <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Information We Collect</h2>
                 <p>When you visit our website, we may collect certain information about you, including:</p>

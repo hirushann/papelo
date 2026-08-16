@@ -116,11 +116,11 @@ class PaperCatalog extends Component
 
     public function render()
     {
-        $title = 'Past Papers — Papelo';
+        $title = 'Past Papers — Papelooo';
         if ($this->filterSubject) {
             $subject = \App\Models\Subject::find($this->filterSubject);
             if ($subject) {
-                $title = "{$subject->name} Past Papers — Papelo";
+                $title = "{$subject->name} Past Papers — Papelooo";
             }
         } elseif ($this->filterLevel) {
             $levelName = match($this->filterLevel) {
@@ -129,7 +129,7 @@ class PaperCatalog extends Component
                 'al' => 'A/L',
                 default => 'Past'
             };
-            $title = "{$levelName} Papers — Papelo";
+            $title = "{$levelName} Papers — Papelooo";
         }
 
         return view('livewire.paper-catalog')

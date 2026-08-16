@@ -3,7 +3,7 @@
         <div class="bg-white rounded-2xl border border-ink/10 shadow-xl shadow-ink/5 p-8">
             <h1 class="font-display text-3xl text-ink mb-6">Refund Policy</h1>
             <div class="prose prose-sm prose-slate text-ink/70">
-                <p>Thank you for shopping at Papelo. We value your satisfaction and strive to provide you with the best online shopping experience possible. If, for any reason, you are not completely satisfied with your purchase, we are here to help.</p>
+                <p>Thank you for shopping at Papelooo. We value your satisfaction and strive to provide you with the best online shopping experience possible. If, for any reason, you are not completely satisfied with your purchase, we are here to help.</p>
 
                 <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Returns</h2>
                 <p>We accept returns within 14 days from the date of purchase. To be eligible for a return, your item must be unused and in the same condition that you received it. It must also be in the original packaging.</p>

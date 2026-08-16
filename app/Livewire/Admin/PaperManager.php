@@ -230,7 +230,7 @@ class PaperManager extends Component
 
         $headers = [
             "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=papelo_export_" . date('Y-m-d') . ".csv",
+            "Content-Disposition" => "attachment; filename=papelooo_export_" . date('Y-m-d') . ".csv",
             "Pragma"              => "no-cache",
             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
             "Expires"             => "0"

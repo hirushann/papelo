@@ -1,6 +1,6 @@
 <x-guest-layout>
-    <x-slot name="title">{{ $paper->title }} — Papelo Exam Practice</x-slot>
-    <x-slot name="description">Practice the {{ $paper->title }} online on Papelo. Get instant MCQ marking, topic breakdowns, and detailed progress reports.</x-slot>
+    <x-slot name="title">{{ $paper->title }} — Papelooo Exam Practice</x-slot>
+    <x-slot name="description">Practice the {{ $paper->title }} online on Papelooo. Get instant MCQ marking, topic breakdowns, and detailed progress reports.</x-slot>
 
     @section('head')
     <script type="application/ld+json">
@@ -11,7 +11,7 @@
       "description": "Practice the {{ $paper->title }} online. Get instant scoring and topic analysis.",
       "provider": {
         "@type": "Organization",
-        "name": "Papelo",
+        "name": "Papelooo",
         "sameAs": "{{ config('app.url') }}"
       }
     }

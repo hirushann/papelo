@@ -3,7 +3,7 @@
         <div class="bg-white rounded-2xl border border-ink/10 shadow-xl shadow-ink/5 p-8">
             <h1 class="font-display text-3xl text-ink mb-6">Terms and Conditions</h1>
             <div class="prose prose-sm prose-slate text-ink/70">
-                <p>Welcome to Papelo. These Terms and Conditions govern your use of our website and the purchase and sale of products from our platform. By accessing and using our website, you agree to comply with these terms. Please read them carefully before proceeding with any transactions.</p>
+                <p>Welcome to Papelooo. These Terms and Conditions govern your use of our website and the purchase and sale of products from our platform. By accessing and using our website, you agree to comply with these terms. Please read them carefully before proceeding with any transactions.</p>
 
                 <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Use of the Website</h2>
                 <ul class="list-none pl-0 space-y-2 mb-4">
@@ -40,13 +40,13 @@
 
                 <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Intellectual Property</h2>
                 <ul class="list-none pl-0 space-y-2 mb-4">
-                    <li>a. All content and materials on our website, including but not limited to text, images, logos, and graphics, are protected by intellectual property rights and are the property of Papelo or its licensors.</li>
+                    <li>a. All content and materials on our website, including but not limited to text, images, logos, and graphics, are protected by intellectual property rights and are the property of Papelooo or its licensors.</li>
                     <li>b. You may not use, reproduce, distribute, or modify any content from our website without our prior written consent.</li>
                 </ul>
 
                 <h2 class="text-lg font-semibold text-ink mt-8 mb-3">Limitation of Liability</h2>
                 <ul class="list-none pl-0 space-y-2 mb-4">
-                    <li>a. In no event shall Papelo, its directors, employees, or affiliates be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with your use of our website or the purchase and use of our products.</li>
+                    <li>a. In no event shall Papelooo, its directors, employees, or affiliates be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with your use of our website or the purchase and use of our products.</li>
                     <li>b. We make no warranties or representations, express or implied, regarding the quality, accuracy, or suitability of the products offered on our website.</li>
                 </ul>
 

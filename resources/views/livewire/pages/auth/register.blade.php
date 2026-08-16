@@ -140,7 +140,7 @@ new #[Layout('layouts.guest')] class extends Component
             <div>
                 <label class="flex items-start gap-2 text-xs text-ink/60 pt-1">
                     <input wire:model="terms" type="checkbox" required class="rounded border-ink/25 text-teal focus:ring-teal mt-0.5">
-                    <span>I agree to Papelo's <a href="{{ route('terms') }}" class="text-teal underline" target="_blank">Terms</a> and <a href="{{ route('privacy') }}" class="text-teal underline" target="_blank">Privacy Policy</a></span>
+                    <span>I agree to Papelooo's <a href="{{ route('terms') }}" class="text-teal underline" target="_blank">Terms</a> and <a href="{{ route('privacy') }}" class="text-teal underline" target="_blank">Privacy Policy</a></span>
                 </label>
                 <x-input-error :messages="$errors->get('terms')" class="mt-2" />
             </div>

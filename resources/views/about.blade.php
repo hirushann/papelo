@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About Us — Papelooo</title>
-<meta name="description" content="Papelo is a Sri Lankan online exam practice platform for Grade 5 Scholarship, O/L, and A/L students — real past papers, marked instantly.">
+<meta name="description" content="Papelooo is a Sri Lankan online exam practice platform for Grade 5 Scholarship, O/L, and A/L students — real past papers, marked instantly.">
 
-<link rel="icon" href="{{ asset('images/papelo-icon-tile.svg') }}" type="image/svg+xml">
+<link rel="icon" href="{{ asset('images/papelooo-icon-tile.svg') }}" type="image/svg+xml">
 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,9 +43,9 @@
 <!-- HERO -->
 <section class="bg-examsheet-quiet">
   <div class="max-w-3xl mx-auto px-6 py-20 text-center">
-    <span class="inline-block text-xs font-semibold tracking-wide uppercase text-teal bg-teal/10 rounded-full px-3 py-1 mb-5">About Papelo</span>
+    <span class="inline-block text-xs font-semibold tracking-wide uppercase text-teal bg-teal/10 rounded-full px-3 py-1 mb-5">About Papelooo</span>
     <h1 class="font-display text-4xl sm:text-5xl leading-[1.15] text-ink mb-6">Practice shouldn't feel like a waiting game.</h1>
-    <p class="text-lg text-ink/70">We built Papelo because getting a past paper marked in Sri Lanka usually means waiting days for a tuition class — by which point you've already moved on to the next topic.</p>
+    <p class="text-lg text-ink/70">We built Papelooo because getting a past paper marked in Sri Lanka usually means waiting days for a tuition class — by which point you've already moved on to the next topic.</p>
   </div>
 </section>
 
@@ -53,7 +53,7 @@
 <section class="max-w-3xl mx-auto px-6 py-16">
   <h2 class="font-display text-2xl text-ink mb-4">Why we started this</h2>
   <p class="text-ink/70 leading-relaxed mb-5">Every O/L and A/L student in Sri Lanka knows the drill: sit a past paper, hand it in, wait — sometimes a week — to find out what you actually got wrong. By the time the marked script comes back, the exam feels like ancient history and the specific thing you got wrong is long forgotten.</p>
-  <p class="text-ink/70 leading-relaxed mb-5">Papelo exists to close that gap. Answer a real past paper the same way you would on exam day, and know your score — and exactly which topics need more work — the moment you finish. No waiting, no guessing.</p>
+  <p class="text-ink/70 leading-relaxed mb-5">Papelooo exists to close that gap. Answer a real past paper the same way you would on exam day, and know your score — and exactly which topics need more work — the moment you finish. No waiting, no guessing.</p>
   <p class="text-ink/70 leading-relaxed">We built it for Grade 5 Scholarship, O/L, and A/L students across every stream, because the same problem exists at every level: practice is only useful if you find out what to fix while it's still fresh.</p>
 </section>
 
@@ -99,7 +99,7 @@
 <footer class="border-t-2 border-margin">
   <div class="max-w-6xl mx-auto px-6 py-14 grid sm:grid-cols-2 md:grid-cols-4 gap-10">
     <div>
-      <span class="font-display text-lg text-ink">Papelo</span>
+      <span class="font-display text-lg text-ink">Papelooo</span>
       <p class="text-sm text-ink/50 mt-3">Past papers, marked instantly, for Sri Lankan students.</p>
     </div>
     <div>
@@ -126,7 +126,7 @@
       </ul>
     </div>
   </div>
-  <div class="border-t border-ink/10 py-6 text-center text-xs text-ink/40">© {{ date('Y') }} Papelo. Made for Sri Lankan students.</div>
+  <div class="border-t border-ink/10 py-6 text-center text-xs text-ink/40">© {{ date('Y') }} Papelooo. Made for Sri Lankan students.</div>
 </footer>
 
 </body>

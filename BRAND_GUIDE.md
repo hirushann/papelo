@@ -1,4 +1,4 @@
-# Papelo — Brand Guide
+# Papelooo — Brand Guide
 
 Quick reference for colors, type, and logo usage across the app.
 
@@ -8,10 +8,10 @@ Quick reference for colors, type, and logo usage across the app.
 
 | File | Use it for |
 |---|---|
-| `papelo-lockup.svg` | Primary logo — nav bars, headers, marketing pages |
-| `papelo-mark.svg` | Icon alone — tight spaces, mobile header, loading states |
-| `papelo-wordmark.svg` | Text alone — footer, legal pages, anywhere the icon feels redundant |
-| `papelo-icon-tile.svg` | Source for app icons / favicons (square, full-bleed) |
+| `papelooo-lockup.svg` | Primary logo — nav bars, headers, marketing pages |
+| `papelooo-mark.svg` | Icon alone — tight spaces, mobile header, loading states |
+| `papelooo-wordmark.svg` | Text alone — footer, legal pages, anywhere the icon feels redundant |
+| `papelooo-icon-tile.svg` | Source for app icons / favicons (square, full-bleed) |
 
 **Clear space:** leave at least the height of the pencil-tip circle empty around the mark on all sides.
 **Minimum size:** don't run the lockup below ~120px wide, or the mark alone below ~24px — use `favicon-16x16.png` at that scale instead of shrinking the SVG.

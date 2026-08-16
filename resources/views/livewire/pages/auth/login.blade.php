@@ -62,5 +62,5 @@ new #[Layout('layouts.guest')] class extends Component
         <p class="text-center text-sm text-ink/60 mt-6">Don't have an account? <a href="{{ route('register') }}" wire:navigate class="text-teal font-semibold hover:underline">Sign up</a></p>
     </div>
 
-    <p class="text-center text-xs text-ink/40 mt-6">By continuing, you agree to Papelo's <a href="{{ route('terms') }}" class="underline" target="_blank">Terms</a> and <a href="{{ route('privacy') }}" class="underline" target="_blank">Privacy Policy</a>.</p>
+    <p class="text-center text-xs text-ink/40 mt-6">By continuing, you agree to Papelooo's <a href="{{ route('terms') }}" class="underline" target="_blank">Terms</a> and <a href="{{ route('privacy') }}" class="underline" target="_blank">Privacy Policy</a>.</p>
 </div>

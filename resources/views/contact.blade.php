@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contact Us — Papelo</title>
-<meta name="description" content="Get in touch with the Papelo team — questions about papers, payments, or your account.">
+<title>Contact Us — Papelooo</title>
+<meta name="description" content="Get in touch with the Papelooo team — questions about papers, payments, or your account.">
 
-<link rel="icon" href="{{ asset('images/papelo-icon-tile.svg') }}" type="image/svg+xml">
+<link rel="icon" href="{{ asset('images/papelooo-icon-tile.svg') }}" type="image/svg+xml">
 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -84,7 +84,7 @@
 <footer class="border-t-2 border-margin">
   <div class="max-w-6xl mx-auto px-6 py-14 grid sm:grid-cols-2 md:grid-cols-4 gap-10">
     <div>
-      <span class="font-display text-lg text-ink">Papelo</span>
+      <span class="font-display text-lg text-ink">Papelooo</span>
       <p class="text-sm text-ink/50 mt-3">Past papers, marked instantly, for Sri Lankan students.</p>
     </div>
     <div>
@@ -111,7 +111,7 @@
       </ul>
     </div>
   </div>
-  <div class="border-t border-ink/10 py-6 text-center text-xs text-ink/40">© {{ date('Y') }} Papelo. Made for Sri Lankan students.</div>
+  <div class="border-t border-ink/10 py-6 text-center text-xs text-ink/40">© {{ date('Y') }} Papelooo. Made for Sri Lankan students.</div>
 </footer>
 
 </body>
