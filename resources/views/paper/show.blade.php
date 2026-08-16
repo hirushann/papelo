@@ -5,12 +5,12 @@
     <x-slot name="head">
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
-      "@type": "Course",
+      "@@context": "https://schema.org",
+      "@@type": "Course",
       "name": "{{ $paper->title }}",
       "description": "Practice the {{ $paper->title }} online. Get instant scoring and topic analysis.",
       "provider": {
-        "@type": "Organization",
+        "@@type": "Organization",
         "name": "Papelooo",
         "sameAs": "{{ config('app.url') }}"
       }

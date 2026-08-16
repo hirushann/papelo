@@ -27,8 +27,8 @@
         <!-- Structured Data / SEO -->
         <script type="application/ld+json">
         {
-          "@context": "https://schema.org",
-          "@type": "WebSite",
+          "@@context": "https://schema.org",
+          "@@type": "WebSite",
           "name": "Papelooo",
           "alternateName": ["Papelooo", "Papelooo"],
           "url": "{{ config('app.url') }}",
@@ -37,14 +37,14 @@
         </script>
         <script type="application/ld+json">
         {
-          "@context": "https://schema.org",
-          "@type": "Organization",
+          "@@context": "https://schema.org",
+          "@@type": "Organization",
           "name": "Papelooo",
           "alternateName": ["Papelooo", "Papelooo"],
           "url": "{{ config('app.url') }}",
           "logo": "{{ asset('images/papelooo-icon-tile.svg') }}",
           "contactPoint": {
-            "@type": "ContactPoint",
+            "@@type": "ContactPoint",
             "email": "contact@papelooo.com",
             "contactType": "customer support"
           }
@@ -52,28 +52,28 @@
         </script>
         <script type="application/ld+json">
         {
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
+          "@@context": "https://schema.org",
+          "@@type": "SoftwareApplication",
           "name": "Papelooo",
           "applicationCategory": "EducationalApplication",
           "operatingSystem": "WebBrowser",
           "offers": [
             {
-              "@type": "Offer",
+              "@@type": "Offer",
               "name": "Practice Plan",
               "price": "490.00",
               "priceCurrency": "LKR",
               "description": "Up to 15 papers a month, instant MCQ marking, and per-attempt topic breakdowns."
             },
             {
-              "@type": "Offer",
+              "@@type": "Offer",
               "name": "Progress Plan",
               "price": "990.00",
               "priceCurrency": "LKR",
               "description": "Unlimited papers, full topic breakdowns, trends over time, and suggested next papers."
             },
             {
-              "@type": "Offer",
+              "@@type": "Offer",
               "name": "Pass Plan",
               "price": "1490.00",
               "priceCurrency": "LKR",
