@@ -20,10 +20,12 @@ class UserDetail extends Component
 
     public function render()
     {
-        // 1. Total spent
-        $totalSpent = Purchase::where('user_id', $this->user->id)
-            ->where('status', 'completed')
-            ->sum('amount_paid');
+        // 1. Current Plan (Instead of Total Spent)
+        $currentSubscription = \App\Models\Subscription::with('plan')
+            ->where('user_id', $this->user->id)
+            ->whereIn('status', ['active', 'past_due'])
+            ->latest()
+            ->first();
 
         // 2. Attempts
         $attemptsCount = Attempt::where('user_id', $this->user->id)
@@ -35,12 +37,6 @@ class UserDetail extends Component
             ->whereNotNull('completed_at')
             ->avg('score');
 
-        // 4. Papers Owned
-        $papersOwned = Purchase::where('user_id', $this->user->id)
-            ->where('status', 'completed')
-            ->distinct('paper_id')
-            ->count('paper_id');
-
         // History
         $recentAttempts = Attempt::with('paper.subject')
             ->where('user_id', $this->user->id)
@@ -48,19 +44,18 @@ class UserDetail extends Component
             ->limit(10)
             ->get();
 
-        $recentPurchases = Purchase::with('paper')
+        $recentSubscriptions = \App\Models\Subscription::with('plan')
             ->where('user_id', $this->user->id)
             ->orderByDesc('created_at')
             ->limit(10)
             ->get();
 
         return view('livewire.admin.user-detail', [
-            'totalSpent' => $totalSpent,
+            'currentSubscription' => $currentSubscription,
             'attemptsCount' => $attemptsCount,
             'avgScore' => $avgScore ? round($avgScore) : 0,
-            'papersOwned' => $papersOwned,
             'recentAttempts' => $recentAttempts,
-            'recentPurchases' => $recentPurchases,
+            'recentSubscriptions' => $recentSubscriptions,
         ]);
     }
 }

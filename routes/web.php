@@ -45,7 +45,7 @@ Route::get('admin/payments', \App\Livewire\Admin\PaymentManager::class)
     ->middleware(['auth', 'admin'])
     ->name('admin.payments');
 
-Route::get('admin/payments/{purchase}', \App\Livewire\Admin\TransactionDetail::class)
+Route::get('admin/payments/{subscription}', \App\Livewire\Admin\TransactionDetail::class)
     ->middleware(['auth', 'admin'])
     ->name('admin.payments.show');
 

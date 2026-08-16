@@ -19,11 +19,14 @@
         <h2 class="font-display text-lg text-ink">{{ $user->name }}</h2>
         <p class="text-xs text-ink/50 mb-3">{{ $user->email }}</p>
         <div class="flex items-center justify-center gap-1.5 mb-5">
-          <span class="text-[11px] font-semibold uppercase text-teal bg-teal/10 rounded-full px-2.5 py-0.5">O/L</span>
-          <span class="text-[11px] font-semibold text-teal bg-teal/10 rounded-full px-2.5 py-0.5">Active</span>
+          @if($currentSubscription && $currentSubscription->status === 'active')
+            <span class="text-[11px] font-semibold text-teal bg-teal/10 rounded-full px-2.5 py-0.5">Active</span>
+          @else
+            <span class="text-[11px] font-semibold text-ink/50 bg-ink/5 rounded-full px-2.5 py-0.5">{{ $currentSubscription ? ucfirst($currentSubscription->status) : 'Inactive' }}</span>
+          @endif
         </div>
         <dl class="text-left text-xs space-y-2 border-t border-ink/10 pt-4">
-          <div class="flex justify-between"><dt class="text-ink/50">Plan</dt><dd class="font-medium text-ink">Monthly subscriber</dd></div>
+          <div class="flex justify-between"><dt class="text-ink/50">Plan</dt><dd class="font-medium text-ink">{{ $currentSubscription ? $currentSubscription->plan->name : 'No active plan' }}</dd></div>
           <div class="flex justify-between"><dt class="text-ink/50">Joined</dt><dd class="font-medium text-ink">{{ $user->created_at->format('M d, Y') }}</dd></div>
           <div class="flex justify-between"><dt class="text-ink/50">Last active</dt><dd class="font-medium text-ink">{{ $user->updated_at->diffForHumans() }}</dd></div>
         </dl>
@@ -40,8 +43,8 @@
       <!-- STATS -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div class="bg-white rounded-2xl border border-ink/10 p-4">
-          <p class="text-xs text-ink/50 mb-1.5">Total spent</p>
-          <p class="font-display text-xl text-ink">Rs. {{ number_format($totalSpent) }}</p>
+          <p class="text-xs text-ink/50 mb-1.5">Current Plan</p>
+          <p class="font-display text-xl text-ink">{{ $currentSubscription ? $currentSubscription->plan->name : 'None' }}</p>
         </div>
         <div class="bg-white rounded-2xl border border-ink/10 p-4">
           <p class="text-xs text-ink/50 mb-1.5">Attempts</p>
@@ -52,8 +55,8 @@
           <p class="font-display text-xl text-ink">{{ $avgScore }}%</p>
         </div>
         <div class="bg-white rounded-2xl border border-ink/10 p-4">
-          <p class="text-xs text-ink/50 mb-1.5">Papers owned</p>
-          <p class="font-display text-xl text-ink">{{ $papersOwned }}</p>
+          <p class="text-xs text-ink/50 mb-1.5">Attempts limit</p>
+          <p class="font-display text-xl text-ink">{{ $currentSubscription ? ($currentSubscription->plan->paper_limit == 0 ? 'Unlimited' : $currentSubscription->plan->paper_limit) : '0' }}</p>
         </div>
       </div>
 
@@ -98,42 +101,43 @@
         <div class="px-6 py-4 border-b border-ink/10">
           <h2 class="font-display text-lg text-ink">Payment history</h2>
         </div>
-        @if($recentPurchases->count() > 0)
+        @if($recentSubscriptions->count() > 0)
         <table class="w-full text-sm">
           <thead>
             <tr class="text-left text-xs text-ink/40 border-b border-ink/10">
-              <th class="font-medium px-6 py-3">Transaction</th>
-              <th class="font-medium px-6 py-3">Item</th>
-              <th class="font-medium px-6 py-3">Amount</th>
-              <th class="font-medium px-6 py-3">Method</th>
+              <th class="font-medium px-6 py-3">Subscription</th>
+              <th class="font-medium px-6 py-3">Plan</th>
+              <th class="font-medium px-6 py-3">Price</th>
               <th class="font-medium px-6 py-3">Status</th>
-              <th class="font-medium px-6 py-3">Date</th>
+              <th class="font-medium px-6 py-3">Since</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-ink/5">
-            @foreach($recentPurchases as $purchase)
+            @foreach($recentSubscriptions as $subscription)
+            @php
+                $statusStyles = [
+                    'active' => 'text-teal bg-teal/10',
+                    'cancelled' => 'text-ink/50 bg-ink/5',
+                    'past_due' => 'text-margin bg-margin/10',
+                    'expired' => 'text-ink/40 bg-ink/5',
+                    'paused' => 'text-gold bg-gold/10',
+                ][$subscription->status] ?? 'text-ink/50 bg-ink/5';
+            @endphp
             <tr>
               <td class="px-6 py-3.5 text-ink/50 font-mono text-xs">
-                  <a href="{{ route('admin.payments.show', $purchase->id) }}" wire:navigate class="hover:text-teal hover:underline">{{ $purchase->ls_subscription_id ?? 'N/A' }}</a>
+                  <a href="{{ route('admin.payments.show', $subscription->id) }}" wire:navigate class="hover:text-teal hover:underline">{{ $subscription->ls_subscription_id ?? 'N/A' }}</a>
               </td>
-              <td class="px-6 py-3.5 text-ink/70">{{ $purchase->paper->title ?? 'Paper Purchase' }}</td>
-              <td class="px-6 py-3.5 font-medium text-ink">Rs. {{ number_format($purchase->amount_paid, 0) }}</td>
-              <td class="px-6 py-3.5 text-ink/60">Visa •••• 4242</td>
+              <td class="px-6 py-3.5 text-ink/70">{{ $subscription->plan->name ?? 'Unknown' }}</td>
+              <td class="px-6 py-3.5 font-medium text-ink">Rs. {{ number_format($subscription->plan->price ?? 0) }}</td>
               <td class="px-6 py-3.5">
-                @if($purchase->status === 'completed')
-                    <span class="text-[11px] font-semibold text-teal bg-teal/10 rounded-full px-2.5 py-0.5">Successful</span>
-                @elseif($purchase->status === 'failed')
-                    <span class="text-[11px] font-semibold text-margin bg-margin/10 rounded-full px-2.5 py-0.5">Failed</span>
-                @else
-                    <span class="text-[11px] font-semibold text-ink/60 bg-ink/5 rounded-full px-2.5 py-0.5">Pending</span>
-                @endif
+                  <span class="text-[11px] font-semibold {{ $statusStyles }} rounded-full px-2.5 py-0.5">{{ ucfirst(str_replace('_', ' ', $subscription->status)) }}</span>
               </td>
-              <td class="px-6 py-3.5 text-ink/40">{{ $purchase->created_at->format('M d, Y') }}</td>
+              <td class="px-6 py-3.5 text-ink/40">{{ $subscription->created_at->format('M d, Y') }}</td>
             </tr>
             @endforeach
           </tbody>
         </table>
-        <div class="px-6 py-3 border-t border-ink/10 text-xs text-ink/40">Showing {{ $recentPurchases->count() }} transactions</div>
+        <div class="px-6 py-3 border-t border-ink/10 text-xs text-ink/40">Showing {{ $recentSubscriptions->count() }} subscriptions</div>
         @else
         <div class="px-6 py-8 text-center text-ink/50 text-sm">
             No payments recorded yet.

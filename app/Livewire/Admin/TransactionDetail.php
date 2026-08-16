@@ -2,20 +2,20 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Purchase;
+use App\Models\Subscription;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.admin')]
 class TransactionDetail extends Component
 {
-    public Purchase $purchase;
+    public Subscription $subscription;
 
-    public function mount(Purchase $purchase)
+    public function mount(Subscription $subscription)
     {
         // Load relationships needed for the receipt
-        $purchase->load(['user', 'paper.subject']);
-        $this->purchase = $purchase;
+        $subscription->load(['user', 'plan']);
+        $this->subscription = $subscription;
     }
 
     public function render()

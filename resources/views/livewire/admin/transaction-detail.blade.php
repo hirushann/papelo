@@ -13,7 +13,7 @@
   <x-slot name="customHeader">
     <header class="h-16 bg-white border-b border-ink/10 flex items-center justify-between px-8 flex-shrink-0 no-print">
       <div>
-        <p class="text-[11px] text-ink/40"><a href="{{ route('admin.payments') }}" wire:navigate class="hover:text-teal">Payments</a> / {{ $purchase->ls_subscription_id ?? 'N/A' }}</p>
+        <p class="text-[11px] text-ink/40"><a href="{{ route('admin.payments') }}" wire:navigate class="hover:text-teal">Payments</a> / {{ $subscription->ls_subscription_id ?? 'N/A' }}</p>
         <h1 class="font-display text-lg text-ink -mt-0.5">Transaction Detail</h1>
       </div>
       <div class="flex items-center gap-3">
@@ -38,12 +38,12 @@
         </div>
         <div class="text-right">
           <h2 class="font-display text-xl text-ink mb-1">Receipt</h2>
-          @if($purchase->status === 'completed')
-            <span class="text-[11px] font-semibold text-teal bg-teal/10 rounded-full px-2.5 py-0.5">Successful</span>
-          @elseif($purchase->status === 'failed')
-            <span class="text-[11px] font-semibold text-margin bg-margin/10 rounded-full px-2.5 py-0.5">Failed</span>
+          @if($subscription->status === 'active')
+            <span class="text-[11px] font-semibold text-teal bg-teal/10 rounded-full px-2.5 py-0.5">Active</span>
+          @elseif($subscription->status === 'past_due' || $subscription->status === 'expired')
+            <span class="text-[11px] font-semibold text-margin bg-margin/10 rounded-full px-2.5 py-0.5">{{ ucfirst(str_replace('_', ' ', $subscription->status)) }}</span>
           @else
-            <span class="text-[11px] font-semibold text-ink/60 bg-ink/5 rounded-full px-2.5 py-0.5">Pending</span>
+            <span class="text-[11px] font-semibold text-ink/60 bg-ink/5 rounded-full px-2.5 py-0.5">{{ ucfirst($subscription->status) }}</span>
           @endif
         </div>
       </div>
@@ -51,27 +51,27 @@
       <div class="grid grid-cols-2 gap-6 mb-8 text-sm">
         <div>
           <p class="text-xs font-semibold text-ink/40 uppercase mb-1">Billed to</p>
-          <p class="font-medium text-ink">{{ $purchase->user->name ?? 'Unknown Student' }}</p>
-          <p class="text-ink/60">{{ $purchase->user->email ?? 'N/A' }}</p>
+          <p class="font-medium text-ink">{{ $subscription->user->name ?? 'Unknown Student' }}</p>
+          <p class="text-ink/60">{{ $subscription->user->email ?? 'N/A' }}</p>
         </div>
         <div class="text-right">
-          <p class="text-xs font-semibold text-ink/40 uppercase mb-1">Receipt details</p>
-          <p class="text-ink/70">Subscription {{ $purchase->ls_subscription_id ?? 'N/A' }}</p>
-          <p class="text-ink/70">{{ $purchase->created_at->format('M j, Y, g:i A') }}</p>
+          <p class="text-xs font-semibold text-ink/40 uppercase mb-1">Subscription details</p>
+          <p class="text-ink/70">Subscription {{ $subscription->ls_subscription_id ?? 'N/A' }}</p>
+          <p class="text-ink/70">{{ $subscription->created_at->format('M j, Y, g:i A') }}</p>
         </div>
       </div>
 
       <div class="border-y border-ink/10 divide-y divide-ink/5">
         <div class="receipt-row">
-          <span class="text-ink/70">{{ $purchase->paper->title ?? 'Paper Purchase' }}</span>
-          <span class="font-medium text-ink">Rs. {{ number_format($purchase->amount_paid, 2) }}</span>
+          <span class="text-ink/70">{{ $subscription->plan->name ?? 'Subscription' }}</span>
+          <span class="font-medium text-ink">Rs. {{ number_format($subscription->plan->price ?? 0, 2) }}</span>
         </div>
       </div>
       <div class="flex justify-end pt-4">
         <div class="w-48">
-          <div class="flex justify-between text-sm text-ink/60 mb-1"><span>Subtotal</span><span>Rs. {{ number_format($purchase->amount_paid, 2) }}</span></div>
+          <div class="flex justify-between text-sm text-ink/60 mb-1"><span>Subtotal</span><span>Rs. {{ number_format($subscription->plan->price ?? 0, 2) }}</span></div>
           <div class="flex justify-between text-sm text-ink/60 mb-2"><span>Tax</span><span>—</span></div>
-          <div class="flex justify-between text-base font-semibold text-ink pt-2 border-t border-ink/10"><span>Total</span><span>Rs. {{ number_format($purchase->amount_paid, 2) }}</span></div>
+          <div class="flex justify-between text-base font-semibold text-ink pt-2 border-t border-ink/10"><span>Total</span><span>Rs. {{ number_format($subscription->plan->price ?? 0, 2) }}</span></div>
         </div>
       </div>
 
@@ -86,8 +86,8 @@
       <div class="bg-white rounded-2xl border border-ink/10 p-5">
         <h3 class="text-sm font-semibold text-ink mb-3">Gateway details</h3>
         <div>
-          <div class="meta-row"><span class="text-ink/50">Subscription ID</span><span class="font-mono text-ink/70">{{ $purchase->ls_subscription_id ?? 'N/A' }}</span></div>
-          <div class="meta-row"><span class="text-ink/50">Status</span><span class="font-mono text-ink/70">{{ ucfirst($purchase->status) }}</span></div>
+          <div class="meta-row"><span class="text-ink/50">Subscription ID</span><span class="font-mono text-ink/70">{{ $subscription->ls_subscription_id ?? 'N/A' }}</span></div>
+          <div class="meta-row"><span class="text-ink/50">Status</span><span class="font-mono text-ink/70">{{ ucfirst(str_replace('_', ' ', $subscription->status)) }}</span></div>
           <div class="meta-row"><span class="text-ink/50">Mode</span><span class="text-ink/70">Live</span></div>
           <div class="meta-row"><span class="text-ink/50">IP address</span><span class="font-mono text-ink/70">112.135.42.7</span></div>
           <div class="meta-row"><span class="text-ink/50">Card</span><span class="text-ink/70">Visa •••• 4242</span></div>
@@ -95,16 +95,16 @@
       </div>
       <div class="bg-white rounded-2xl border border-ink/10 p-5">
         <h3 class="text-sm font-semibold text-ink mb-3">Related student</h3>
-        @if($purchase->user)
+        @if($subscription->user)
           @php
             $colors = ['#3F7D6B', '#B5514A', '#22314A', '#C79A46', '#8a8577'];
-            $bgColor = $colors[crc32($purchase->user->email) % count($colors)];
-            $initials = strtoupper(substr($purchase->user->name, 0, 2));
+            $bgColor = $colors[crc32($subscription->user->email) % count($colors)];
+            $initials = strtoupper(substr($subscription->user->name, 0, 2));
           @endphp
-          <a href="{{ route('admin.users.show', $purchase->user->id) }}" wire:navigate class="flex items-center gap-3 hover:bg-paper/50 rounded-lg p-2 -m-2">
+          <a href="{{ route('admin.users.show', $subscription->user->id) }}" wire:navigate class="flex items-center gap-3 hover:bg-paper/50 rounded-lg p-2 -m-2">
             <div class="w-9 h-9 rounded-full flex items-center justify-center text-paper text-xs font-semibold flex-shrink-0" style="background: {{ $bgColor }};">{{ $initials }}</div>
             <div class="min-w-0">
-              <p class="text-sm font-medium text-ink truncate">{{ $purchase->user->name }}</p>
+              <p class="text-sm font-medium text-ink truncate">{{ $subscription->user->name }}</p>
               <p class="text-xs text-teal">View full profile &rarr;</p>
             </div>
           </a>

@@ -33,13 +33,15 @@ class Analytics extends Component
         };
 
         // KPI: Revenue
-        $revenue = Purchase::where('status', 'completed')
-            ->where('created_at', '>=', $dateThreshold)
-            ->sum('amount_paid');
+        $revenue = \App\Models\Subscription::join('plans', 'subscriptions.plan_id', '=', 'plans.id')
+            ->whereIn('subscriptions.status', ['active', 'cancelled', 'past_due', 'expired', 'paused'])
+            ->where('subscriptions.created_at', '>=', $dateThreshold)
+            ->sum('plans.price');
             
-        $priorRevenue = Purchase::where('status', 'completed')
-            ->whereBetween('created_at', [$priorDateThreshold, $dateThreshold])
-            ->sum('amount_paid');
+        $priorRevenue = \App\Models\Subscription::join('plans', 'subscriptions.plan_id', '=', 'plans.id')
+            ->whereIn('subscriptions.status', ['active', 'cancelled', 'past_due', 'expired', 'paused'])
+            ->whereBetween('subscriptions.created_at', [$priorDateThreshold, $dateThreshold])
+            ->sum('plans.price');
             
         $revenueGrowth = $priorRevenue > 0 ? round((($revenue - $priorRevenue) / $priorRevenue) * 100) : 0;
 
@@ -103,9 +105,10 @@ class Analytics extends Component
             $end = now()->subDays($i * $bucketSize);
             if ($i == 0) $end = now(); // Ensure last bucket goes up to now
             
-            $bucketRevenue = Purchase::where('status', 'completed')
-                ->whereBetween('created_at', [$start, $end])
-                ->sum('amount_paid');
+            $bucketRevenue = \App\Models\Subscription::join('plans', 'subscriptions.plan_id', '=', 'plans.id')
+                ->whereIn('subscriptions.status', ['active', 'cancelled', 'past_due', 'expired', 'paused'])
+                ->whereBetween('subscriptions.created_at', [$start, $end])
+                ->sum('plans.price');
                 
             $revenueTrend[] = $bucketRevenue;
             if ($bucketRevenue > $maxBucketRevenue) {
@@ -139,7 +142,7 @@ class Analytics extends Component
             ->get();
             
         // Purchased count (distinct users who made a purchase)
-        $purchasedCount = Purchase::where('status', 'completed')
+        $purchasedCount = \App\Models\Subscription::whereIn('status', ['active', 'cancelled', 'past_due', 'expired', 'paused'])
             ->where('created_at', '>=', $dateThreshold)
             ->distinct('user_id')
             ->count();
