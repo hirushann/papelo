@@ -10,6 +10,20 @@ class ContactSubmissions extends Component
 {
     use WithPagination;
 
+    public ?ContactSubmission $viewingSubmission = null;
+
+    public function viewMessage($id)
+    {
+        $this->viewingSubmission = ContactSubmission::find($id);
+        
+        if ($this->viewingSubmission && !$this->viewingSubmission->is_read) {
+            $this->viewingSubmission->is_read = true;
+            $this->viewingSubmission->save();
+        }
+
+        \Flux::modal('view-message')->show();
+    }
+
     public function markAsRead($id)
     {
         $submission = ContactSubmission::find($id);

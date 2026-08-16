@@ -32,7 +32,7 @@
                         {{ $submission->category }}
                     </td>
                     <td class="px-6 py-4">
-                        <div class="max-w-md line-clamp-2" title="{{ $submission->message }}">
+                        <div class="max-w-md line-clamp-2 cursor-pointer hover:text-teal transition" wire:click="viewMessage({{ $submission->id }})" title="Click to view full message">
                             {{ $submission->message }}
                         </div>
                     </td>
@@ -40,6 +40,7 @@
                         {{ $submission->created_at->format('M d, Y h:i A') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-xs">
+                        <button wire:click="viewMessage({{ $submission->id }})" class="text-teal hover:text-teal/80 font-semibold mr-3">View</button>
                         @if($submission->is_read)
                             <button wire:click="markAsUnread({{ $submission->id }})" class="text-ink/50 hover:text-ink">Mark Unread</button>
                         @else
@@ -59,4 +60,46 @@
     <div class="mt-4">
         {{ $submissions->links() }}
     </div>
+
+    <flux:modal name="view-message" class="md:w-full md:max-w-lg">
+        @if($viewingSubmission)
+            <div class="mb-4">
+                <div class="mb-4">
+                    <h3 class="font-display text-xl text-ink">Message Details</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-ink/50">Sender</p>
+                            <p class="text-sm text-ink">{{ $viewingSubmission->name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-ink/50">Email</p>
+                            <a href="mailto:{{ $viewingSubmission->email }}" class="text-sm text-teal hover:underline">{{ $viewingSubmission->email }}</a>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-ink/50">Category</p>
+                            <p class="text-sm text-ink">{{ $viewingSubmission->category }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-ink/50">Date</p>
+                            <p class="text-sm text-ink">{{ $viewingSubmission->created_at->format('M d, Y h:i A') }}</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-ink/50 mb-1">Message</p>
+                        <div class="bg-gray-50 rounded-lg p-4 border border-ink/5 text-sm text-ink whitespace-pre-wrap">{{ $viewingSubmission->message }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end pt-4 border-t border-ink/10">
+                <flux:modal.close>
+                    <flux:button variant="ghost">Close</flux:button>
+                </flux:modal.close>
+            </div>
+        @endif
+    </flux:modal>
 </div>
