@@ -236,6 +236,6 @@ class QuizTaker extends Component
 
     public function render()
     {
-        return view('livewire.quiz-taker')->title($this->paper->title . ' — Papelooo');
+        return view('livewire.quiz-taker')->title($this->paper->title . ' — Papelo');
     }
 }

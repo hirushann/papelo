@@ -9,7 +9,8 @@
         <meta name="description" content="Papelo is the ultimate online platform for Sri Lankan students to practice past exam papers as interactive MCQs with instant scoring and topic analytics.">
 
         <link rel="icon" href="{{ asset('images/papelo-icon-tile.svg') }}" type="image/svg+xml">
-        <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+        <link rel="canonical" href="{{ url()->current() }}">
+
 
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website">
@@ -47,6 +48,38 @@
             "email": "contact@papelooo.com",
             "contactType": "customer support"
           }
+        }
+        </script>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "Papelo",
+          "applicationCategory": "EducationalApplication",
+          "operatingSystem": "WebBrowser",
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Practice Plan",
+              "price": "490.00",
+              "priceCurrency": "LKR",
+              "description": "Up to 15 papers a month, instant MCQ marking, and per-attempt topic breakdowns."
+            },
+            {
+              "@type": "Offer",
+              "name": "Progress Plan",
+              "price": "990.00",
+              "priceCurrency": "LKR",
+              "description": "Unlimited papers, full topic breakdowns, trends over time, and suggested next papers."
+            },
+            {
+              "@type": "Offer",
+              "name": "Pass Plan",
+              "price": "1490.00",
+              "priceCurrency": "LKR",
+              "description": "Unlimited papers plus structured and self-marked papers with model solutions and downloadable progress reports."
+            }
+          ]
         }
         </script>
 
@@ -91,7 +124,7 @@
                     <h1 class="text-4xl sm:text-5xl leading-[1.1] text-ink mb-5">Practice like it's exam day. Know your marks before you leave your desk.</h1>
                     <p class="text-lg text-ink/70 mb-8 max-w-md">Hundreds of real past papers, auto-marked the moment you finish — with a breakdown of exactly which topics still need work.</p>
                     <div class="flex flex-wrap items-center gap-4 mb-6">
-                        <a href="#pricing" class="inline-flex items-center rounded-lg bg-teal text-paper font-semibold px-6 py-3 hover:bg-teal/90 transition">Start practicing — Rs. 100/paper</a>
+                        <a href="#pricing" class="inline-flex items-center rounded-lg bg-teal text-paper font-semibold px-6 py-3 hover:bg-teal/90 transition">Start practicing from Rs. 490/mo</a>
                         <a href="#how" class="inline-flex items-center text-ink font-semibold px-2 py-3 hover:text-teal transition">See how it works →</a>
                     </div>
                     <p class="text-sm text-ink/50">500+ past papers · Instant results · No sign-up to browse</p>
@@ -240,21 +273,7 @@
         {{-- ── Pricing ────────────────────────────────────────── --}}
         <section id="pricing" class="max-w-6xl mx-auto px-6 py-24">
             <h2 class="font-display text-3xl text-ink text-center mb-14">Simple, exam-friendly pricing</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                <!-- PAY AS YOU GO -->
-                <div class="rounded-2xl border border-ink/10 bg-white p-6 flex flex-col">
-                    <h3 class="font-display text-lg text-ink mb-1">Pay As You Go</h3>
-                    <p class="text-xs text-ink/50 mb-5">Trying it out</p>
-                    <p class="mb-6"><span class="font-display text-3xl text-ink">Rs. 100</span><span class="text-ink/50 text-sm"> / paper</span></p>
-                    <div class="space-y-2.5 mb-8 flex-1 text-sm">
-                        <div class="flex items-start gap-2"><svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="#3F7D6B" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Instant MCQ &amp; short-answer marking</div>
-                        <div class="flex items-start gap-2"><svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="#3F7D6B" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Unlimited attempts on your paper</div>
-                        <div class="flex items-start gap-2"><svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="#3F7D6B" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Per-attempt topic breakdown</div>
-                        <div class="flex items-start gap-2 text-ink/35"><svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>No subscription required</div>
-                    </div>
-                    <a href="{{ route('papers') }}" class="block text-center rounded-lg border border-ink/20 text-ink font-semibold py-2.5 hover:bg-ink hover:text-paper transition">Buy a paper</a>
-                </div>
+            <div class="grid md:grid-cols-3 gap-6">
 
                 <!-- PRACTICE -->
                 <div class="rounded-2xl border border-ink/10 bg-white p-6 flex flex-col">

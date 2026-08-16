@@ -54,4 +54,12 @@ class Paper extends Model
     {
         return $this->hasMany(Attempt::class);
     }
+
+    /**
+     * Get the SEO-friendly slug for this paper.
+     */
+    public function getSlugAttribute(): string
+    {
+        return \Illuminate\Support\Str::slug($this->title);
+    }
 }

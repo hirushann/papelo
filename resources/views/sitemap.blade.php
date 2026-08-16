@@ -35,4 +35,11 @@
         <changefreq>yearly</changefreq>
         <priority>0.4</priority>
     </url>
+    @foreach(\App\Models\Paper::where('is_published', true)->get() as $paper)
+    <url>
+        <loc>{{ route('paper.show', ['paper' => $paper->id, 'slug' => $paper->slug]) }}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    @endforeach
 </urlset>

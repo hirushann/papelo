@@ -1,2 +1,4 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://papelooo.com/sitemap.xml

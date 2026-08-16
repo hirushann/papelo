@@ -64,6 +64,9 @@ Route::get('admin/papers', \App\Livewire\Admin\PaperManager::class)
 Route::get('papers', \App\Livewire\PaperCatalog::class)
     ->name('papers');
 
+Route::get('paper/{paper}-{slug}', [\App\Http\Controllers\PublicPaperController::class, 'show'])
+    ->name('paper.show');
+
 // Quiz and Result routes
 Route::get('quiz/{paper}', \App\Livewire\QuizTaker::class)
     ->middleware(['auth'])

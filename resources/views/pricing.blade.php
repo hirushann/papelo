@@ -7,7 +7,7 @@
 <meta name="description" content="Simple, exam-friendly pricing for O/L, A/L, and Grade 5 Scholarship past paper practice. Pay per paper or subscribe for unlimited access.">
 
 <link rel="icon" href="{{ asset('images/papelo-icon-tile.svg') }}" type="image/svg+xml">
-<link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -65,6 +65,38 @@
         "@type": "Answer",
         "text": "Yes, no lock-in. Cancel from your account settings and you'll keep access until the end of your current billing period."
       }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Papelo",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "WebBrowser",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Practice Plan",
+      "price": "490.00",
+      "priceCurrency": "LKR",
+      "description": "Up to 15 papers a month, instant MCQ marking, and per-attempt topic breakdowns."
+    },
+    {
+      "@type": "Offer",
+      "name": "Progress Plan",
+      "price": "990.00",
+      "priceCurrency": "LKR",
+      "description": "Unlimited papers, full topic breakdowns, trends over time, and suggested next papers."
+    },
+    {
+      "@type": "Offer",
+      "name": "Pass Plan",
+      "price": "1490.00",
+      "priceCurrency": "LKR",
+      "description": "Unlimited papers plus structured and self-marked papers with model solutions and downloadable progress reports."
     }
   ]
 }

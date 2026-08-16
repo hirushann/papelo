@@ -116,8 +116,24 @@ class PaperCatalog extends Component
 
     public function render()
     {
+        $title = 'Past Papers — Papelo';
+        if ($this->filterSubject) {
+            $subject = \App\Models\Subject::find($this->filterSubject);
+            if ($subject) {
+                $title = "{$subject->name} Past Papers — Papelo";
+            }
+        } elseif ($this->filterLevel) {
+            $levelName = match($this->filterLevel) {
+                'scholarship' => 'Grade 5 Scholarship',
+                'ol' => 'O/L',
+                'al' => 'A/L',
+                default => 'Past'
+            };
+            $title = "{$levelName} Papers — Papelo";
+        }
+
         return view('livewire.paper-catalog')
             ->layout('layouts.quiz')
-            ->title('Past Papers — Papelooo');
+            ->title($title);
     }
 }
