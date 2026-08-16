@@ -10,6 +10,8 @@
         
         <link rel="canonical" href="{{ url()->current() }}">
 
+        {{ $head ?? '' }}
+
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ url()->current() }}">

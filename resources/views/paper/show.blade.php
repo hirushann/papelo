@@ -2,7 +2,7 @@
     <x-slot name="title">{{ $paper->title }} — Papelooo Exam Practice</x-slot>
     <x-slot name="description">Practice the {{ $paper->title }} online on Papelooo. Get instant MCQ marking, topic breakdowns, and detailed progress reports.</x-slot>
 
-    @section('head')
+    <x-slot name="head">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -16,7 +16,7 @@
       }
     }
     </script>
-    @endsection
+    </x-slot>
 
     <div class="py-12 px-6 max-w-4xl mx-auto">
         
