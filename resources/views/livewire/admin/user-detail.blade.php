@@ -35,6 +35,22 @@
         <button class="w-full text-left text-sm font-medium text-ink/70 hover:text-ink px-3 py-2 rounded-lg hover:bg-paper/60">Send password reset</button>
         <button class="w-full text-left text-sm font-medium text-margin hover:bg-margin/5 px-3 py-2 rounded-lg">Suspend account</button>
       </div>
+
+      <div class="bg-white rounded-2xl border border-ink/10 p-5 mt-4">
+        <h3 class="text-sm font-semibold text-ink mb-3">Grant Free Access</h3>
+        <p class="text-xs text-ink/50 mb-4">Manually assign a plan to this student for free lifetime access.</p>
+        <div class="space-y-3">
+          <flux:select wire:model="selectedPlanId" placeholder="Select a plan...">
+            @foreach($plans as $plan)
+              <flux:select.option value="{{ $plan->id }}">{{ $plan->name }}</flux:select.option>
+            @endforeach
+          </flux:select>
+          <flux:button wire:click="grantFreePlan" variant="primary" class="w-full">Grant Plan</flux:button>
+        </div>
+        @if(session('success'))
+          <p class="text-xs text-teal mt-3 font-medium">{{ session('success') }}</p>
+        @endif
+      </div>
     </aside>
 
     <!-- MAIN COLUMN -->
