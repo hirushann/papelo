@@ -5,7 +5,20 @@
         </div>
     @endif
 
-    <form wire:submit.prevent="submit" class="space-y-5">
+    <form x-data="{
+        submitting: false,
+        executeRecaptcha() {
+            this.submitting = true;
+            grecaptcha.ready(() => {
+                grecaptcha.execute('{{ env('RECAPTCHA_SITE_KEY') }}', {action: 'contact'}).then((token) => {
+                    @this.set('recaptchaToken', token);
+                    @this.call('submit').then(() => {
+                        this.submitting = false;
+                    });
+                });
+            });
+        }
+    }" x-on:submit.prevent="executeRecaptcha" class="space-y-5">
         <div class="grid sm:grid-cols-2 gap-4">
             <div class="field">
                 <label>Name</label>
@@ -36,30 +49,15 @@
         </div>
 
         <div>
-            <div wire:ignore>
-                <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}" data-callback="handleRecaptchaCallback"></div>
-            </div>
             @error('recaptchaToken') <span class="text-xs text-margin mt-1">{{ $message }}</span> @enderror
         </div>
 
-        <button type="submit" class="w-full sm:w-auto rounded-lg bg-teal text-paper font-semibold px-8 py-3 hover:bg-teal/90 transition flex items-center justify-center gap-2" wire:loading.attr="disabled">
-            <span wire:loading.remove wire:target="submit">Send message</span>
+        <button type="submit" class="w-full sm:w-auto rounded-lg bg-teal text-paper font-semibold px-8 py-3 hover:bg-teal/90 transition flex items-center justify-center gap-2" x-bind:disabled="submitting" wire:loading.attr="disabled">
+            <span x-show="!submitting" wire:loading.remove wire:target="submit">Send message</span>
+            <span x-show="submitting" style="display: none;">Verifying...</span>
             <span wire:loading wire:target="submit">Sending...</span>
         </button>
     </form>
 
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script>
-        function handleRecaptchaCallback(token) {
-            @this.set('recaptchaToken', token);
-        }
-        
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('reset-recaptcha', () => {
-                if (typeof grecaptcha !== 'undefined') {
-                    grecaptcha.reset();
-                }
-            });
-        });
-    </script>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
 </div>
